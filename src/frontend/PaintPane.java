@@ -61,12 +61,12 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 		VBox buttonsBox = new VBox(10);
-		buttonsBox.getChildren().addAll(toolsArr);
-		buttonsBox.getChildren().add(fillColorPicker);
-		buttonsBox.setPadding(new Insets(5));
-		buttonsBox.setStyle("-fx-background-color: #999");
-		buttonsBox.setPrefWidth(100);
-		gc.setLineWidth(1);
+		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones
+		buttonsBox.getChildren().add(fillColorPicker); // seleccionador de colores (arranca en amarillo)
+		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
+		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
+		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
+		gc.setLineWidth(1); // borde de las figuras
 
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
@@ -108,17 +108,16 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState.figures()) {
+			for(Figure figure : canvasState.figures()) { // cambiar esto por metodo "encontrar figura"
 				if(figureBelongs(figure, eventPoint)) {
 					found = true;
 					label.append(figure.toString());
 				}
 			}
-			if(found) {
-				statusPane.updateStatus(label.toString());
-			} else {
-				statusPane.updateStatus(eventPoint.toString());
+			if(!found) { // cambiado
+				label.append(eventPoint);
 			}
+			statusPane.updateStatus(label.toString());
 		});
 
 		canvas.setOnMouseClicked(event -> {
@@ -126,8 +125,8 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState.figures()) {
-					if(figureBelongs(figure, eventPoint)) {
+				for (Figure figure : canvasState.figures()) {   // se repite codigo
+					if(figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
 						found = true;
 						selectedFigure = figure;
 						label.append(figure.toString());
@@ -146,9 +145,9 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMouseDragged(event -> {
 			if(selectionButton.isSelected()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
-				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
-				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
-				if(selectedFigure instanceof Rectangle) {
+				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;  // cambiar por getDistance(point, point)
+				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;  // cambiar por getDistance(point, point)
+				if(selectedFigure instanceof Rectangle) {   // cambiar por metodo selectedFigure.move(diffX, diffY)
 					Rectangle rectangle = (Rectangle) selectedFigure;
 					rectangle.getTopLeft().x += diffX;
 					rectangle.getBottomRight().x += diffX;
