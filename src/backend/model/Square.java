@@ -1,25 +1,12 @@
 package backend.model;
 
-public class Square implements Figure {
-
-    private final Point topLeft, bottomRight;
+public class Square extends Rectangle implements Figure {
 
     public Square(Point topLeft, double size) {
-        this.topLeft = topLeft;
-        this.bottomRight = new Point(topLeft.x + size, topLeft.y + size);
+        super(topLeft,new Point(topLeft.getX() + size, topLeft.getY() + size));
     }
-
-    public Point getTopLeft() {
-        return topLeft;
-    }
-
-    public Point getBottomRight() {
-        return bottomRight;
-    }
-
     @Override
     public String toString() {
-        return String.format("Cuadrado [ %s , %s ]", topLeft, bottomRight);
+        return String.format("Cuadrado [ %s , %s ]", getTopLeft(), getBottomRight());
     }
-
 }
