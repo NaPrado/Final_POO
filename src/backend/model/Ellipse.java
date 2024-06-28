@@ -3,7 +3,7 @@ package backend.model;
 public class Ellipse implements Figure {
 
     protected final Point centerPoint;
-    protected final double sMayorAxis, sMinorAxis;
+    private final double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
         this.centerPoint = centerPoint;

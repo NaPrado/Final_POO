@@ -1,8 +1,8 @@
 package backend.model;
 
-public class Circle extends Ellipse implements Figure {
+public class Circle extends Ellipse {
     public Circle(Point centerPoint, double radius) {
-        super(centerPoint,radius,radius);
+        super(centerPoint,radius*2,radius*2);
     }
 
     @Override
@@ -11,7 +11,7 @@ public class Circle extends Ellipse implements Figure {
     }
 
     public double getRadius() {
-        return getsMayorAxis();
+        return getsMayorAxis()/2;
     }
 
     @Override
