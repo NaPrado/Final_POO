@@ -143,6 +143,9 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseDragged(event -> {
+			if (selectedFigure == null) {
+				return;
+			}
 			if(selectionButton.isSelected()) {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				double diffX = (eventPoint.getDistanceX(startPoint)) / 100;
