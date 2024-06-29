@@ -68,9 +68,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
 		gc.setLineWidth(1); // borde de las figuras
 
-		canvas.setOnMousePressed(event -> {
-			startPoint = new Point(event.getX(), event.getY());
-		});
+		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
@@ -80,7 +78,7 @@ public class PaintPane extends BorderPane {
 			if(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
-			Figure newFigure = null;
+			Figure newFigure;
 			if(rectangleButton.isSelected()) {
 				newFigure = new Rectangle(startPoint, endPoint);
 			}
@@ -99,7 +97,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			figureColorMap.put(newFigure, fillColorPicker.getValue());
-			canvasState.addFigure(newFigure);
+			canvasState.add(newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -108,10 +106,10 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState.figures()) { // cambiar esto por metodo "encontrar figura"
+			for(Figure figure : canvasState) { // cambiar esto por metodo "encontrar figura"
 				if(figureBelongs(figure, eventPoint)) {
 					found = true;
-					label.append(figure.toString());
+					label.append(figure);
 				}
 			}
 			if(!found) { // cambiado
@@ -125,11 +123,11 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState.figures()) {   // se repite codigo
+				for (Figure figure : canvasState) {   // se repite codigo
 					if(figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
 						found = true;
 						selectedFigure = figure;
-						label.append(figure.toString());
+						label.append(figure);
 					}
 				}
 				if (found) {
@@ -155,9 +153,9 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		deleteButton.setOnAction(event -> {
+		deleteButton.setOnAction(_ -> {
 			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedFigure);
+				canvasState.remove(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -169,7 +167,7 @@ public class PaintPane extends BorderPane {
 
 	void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(Figure figure : canvasState.figures()) {
+		for(Figure figure : canvasState) {
 			if(figure == selectedFigure) {
 				gc.setStroke(Color.RED);
 			} else {
