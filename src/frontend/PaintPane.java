@@ -227,10 +227,7 @@ public class PaintPane extends BorderPane {
 
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				canvasState.remove(selectedFigure);
-				figureColorMap.remove(selectedFigure);
-				figureShadowMap.remove(selectedFigure);
-				figureBorderMap.remove(selectedFigure);
+				deleteFigure(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -253,6 +250,7 @@ public class PaintPane extends BorderPane {
 				canvasState.add(pairFigure.getKey());
 				propertiesCopy(selectedFigure, pairFigure.getValue());
 				propertiesCopy(pairFigure.getValue(), pairFigure.getKey());
+				deleteFigure(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -322,6 +320,13 @@ public class PaintPane extends BorderPane {
 
 	private boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.belongs(eventPoint);
+	}
+
+	private void deleteFigure(Figure figure) {
+		canvasState.remove(figure);
+		figureColorMap.remove(figure);
+		figureShadowMap.remove(figure);
+		figureBorderMap.remove(figure);
 	}
 
 }
