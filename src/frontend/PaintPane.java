@@ -99,7 +99,7 @@ public class PaintPane extends BorderPane {
 		}
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones de figuras y select
-		
+
 		//Sombras
 		buttonsBox.getChildren().add(new Label("Sombras"));
 		buttonsBox.getChildren().add(shadows); // agrega las opciones de sombras
@@ -126,7 +126,7 @@ public class PaintPane extends BorderPane {
 		ToggleGroup actions = new ToggleGroup();
 		for (ToggleButton action : actionArr) {
 			action.setMinWidth(90);
-			action.setToggleGroup(tools);
+			action.setToggleGroup(actions);
 			action.setCursor(Cursor.HAND);
 		}
 		buttonsBox.getChildren().addAll(actionArr);
