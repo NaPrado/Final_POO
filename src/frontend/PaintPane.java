@@ -66,6 +66,11 @@ public class PaintPane extends BorderPane {
 	// Selector de sombras
 	ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
 
+	// Botones Acciones
+	ToggleButton duplicarButton = new ToggleButton("Duplicar");
+	ToggleButton dividirButton = new ToggleButton("Dividir");
+	ToggleButton movCentroButton = new ToggleButton("Mov. Centro");
+
 	// Dibujar una figura
 	Point startPoint;
 
@@ -94,12 +99,18 @@ public class PaintPane extends BorderPane {
 		}
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones de figuras y select
+		
+		//Sombras
 		buttonsBox.getChildren().add(new Label("Sombras"));
 		buttonsBox.getChildren().add(shadows); // agrega las opciones de sombras
 		shadows.setValue(ShadowEnum.NINGUNA); //setea ninguna
+
+		//Relleno
 		buttonsBox.getChildren().add(new Label("Relleno"));
 		buttonsBox.getChildren().add(fillColorPicker1); // agrega las opciones de relleno
 		buttonsBox.getChildren().add(fillColorPicker2); // seleccionador de colores (arranca en amarillo)
+
+		//Borde
 		buttonsBox.getChildren().add(new Label("Borde"));
 		buttonsBox.getChildren().add(edgeSlider);
 		edgeSlider.setMax(10);
@@ -108,6 +119,19 @@ public class PaintPane extends BorderPane {
 		edgeSlider.setShowTickLabels(true);
 		buttonsBox.getChildren().add(borders);
 		borders.setValue(BorderEnum.NORMAL);
+
+		//Acciones
+		buttonsBox.getChildren().add(new Label("Acciones"));
+		ToggleButton[] actionArr = {duplicarButton, dividirButton, movCentroButton};
+		ToggleGroup actions = new ToggleGroup();
+		for (ToggleButton action : actionArr) {
+			action.setMinWidth(90);
+			action.setToggleGroup(tools);
+			action.setCursor(Cursor.HAND);
+		}
+		buttonsBox.getChildren().addAll(actionArr);
+
+		//Parametros
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
 		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
