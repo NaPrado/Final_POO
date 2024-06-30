@@ -1,5 +1,7 @@
 package backend.model;
 
+import javafx.util.Pair;
+
 public class Ellipse implements Figure {
 
     protected final Point centerPoint;
@@ -72,5 +74,21 @@ public class Ellipse implements Figure {
     @Override
     public Point getCenter() {
         return centerPoint;
+    }
+
+    @Override
+    public Figure duplicate() {
+        return new Ellipse(new Point(centerPoint.getX()+OFFSET,centerPoint.getY()+OFFSET),
+                sMayorAxis, sMinorAxis);
+    }
+
+    @Override
+    public Pair<Figure, Figure> split() {
+        Figure fig1,fig2;
+        fig1 = new Ellipse(new Point(getCenterPoint().getX()-getWidth()/4,getCenterPoint().getY()),
+                (getsMayorAxis())/2,getsMinorAxis()/2);
+        fig2 = new Ellipse(new Point(getCenterPoint().getX()+getWidth()/4,getCenterPoint().getY()),
+                (getsMayorAxis())/2,getsMinorAxis()/2);
+        return new Pair<>(fig1,fig2);
     }
 }

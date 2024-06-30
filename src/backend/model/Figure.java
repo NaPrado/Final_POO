@@ -1,6 +1,10 @@
 package backend.model;
 
+import backend.CanvasState;
+import javafx.util.Pair;
+
 public interface Figure {
+    public static int OFFSET = 10;
     public void move(double diffX, double diffY);
     public boolean isRect();
     public boolean isRound();
@@ -10,4 +14,6 @@ public interface Figure {
     public double getWidth();
     public boolean belongs(Point eventPoint);
     public Point getCenter();
+    public Figure duplicate();
+    public Pair<Figure,Figure> split();
 }

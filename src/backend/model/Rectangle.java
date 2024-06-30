@@ -1,5 +1,7 @@
 package backend.model;
 
+import javafx.util.Pair;
+
 public class Rectangle implements Figure{
 
     private final Point topLeft, bottomRight;
@@ -69,6 +71,22 @@ public class Rectangle implements Figure{
     @Override
     public Point getCenter() {
         return new Point(topLeft.getX()+getWidth()/2, topLeft.getY()+getHeight()/2);
+    }
+
+    @Override
+    public Figure duplicate() {
+        return new Rectangle(new Point(topLeft.getX()+OFFSET,topLeft.getY()+OFFSET),
+                new Point(bottomRight.getX()+OFFSET,bottomRight.getY()+OFFSET));
+    }
+
+    @Override
+    public Pair<Figure, Figure> split() {
+        Figure fig1,fig2;
+        fig1 = new Rectangle(new Point(getCenter().getX()-getWidth()/2,getCenter().getY()-getHeight()/4),
+                new Point(getCenter().getX()+getWidth()/2,getCenter().getY()+getHeight()/4));
+        fig2 = new Rectangle(new Point(getCenter().getX(),getCenter().getY()-getHeight()/4),
+                new Point(getCenter().getX()+getWidth()/2,getCenter().getY()+getHeight()/4));
+        return new Pair<>(fig1, fig2);
     }
 
 }
