@@ -12,7 +12,8 @@ import javafx.scene.control.*;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.*;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,10 +46,12 @@ public class PaintPane extends BorderPane {
 					ShadowEnum.NINGUNA
 			);
 
-	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
+	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);  // choice box para las sombras
+
+	ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor);
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
+	ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor);
 
 	// Dibujar una figura
 	Point startPoint;
@@ -60,7 +63,7 @@ public class PaintPane extends BorderPane {
 	StatusPane statusPane;
 
 	// Colores de relleno de cada figura
-	Map<Figure, Color> figureColorMap = new HashMap<>();
+	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
 
 	Map<Figure, ShadowEnum> figureShadowMap = new HashMap<>();
 
@@ -79,7 +82,9 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(new Label("Sombras"));
 		buttonsBox.getChildren().add(shadows); // agrega las opciones de sombras
 		shadows.setValue(ShadowEnum.NINGUNA);
-		buttonsBox.getChildren().add(fillColorPicker); // seleccionador de colores (arranca en amarillo)
+		buttonsBox.getChildren().add(new Label("Relleno"));
+		buttonsBox.getChildren().add(fillColorPicker1); // agrega las opciones de relleno
+		buttonsBox.getChildren().add(fillColorPicker2); // seleccionador de colores (arranca en amarillo)
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
 		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
@@ -113,7 +118,7 @@ public class PaintPane extends BorderPane {
 			} else {
 				return ;
 			}
-			figureColorMap.put(newFigure, fillColorPicker.getValue());
+			figureColorMap.put(newFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 			figureShadowMap.put(newFigure, shadows.getValue());
 			canvasState.add(newFigure);
 			startPoint = null;
@@ -188,19 +193,30 @@ public class PaintPane extends BorderPane {
 		for(Figure figure : canvasState) {
 			if(figure == selectedFigure) {
 				gc.setStroke(Color.RED);
+				figureShadowMap.put(figure, shadows.getValue());
+				figureColorMap.put(figure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 			} else {
 				gc.setStroke(lineColor);
 			}
-			gc.setFill(figureColorMap.get(figure));
 			if (figure.isRect()) {
-				figureShadowMap.get(figure).shadowRec(gc,figure,figureColorMap.get(figure).darker());
+				figureShadowMap.get(figure).shadowRec(gc,figure,figureColorMap.get(figure).getKey().darker());
+				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+						CycleMethod.NO_CYCLE,
+						new Stop(0, figureColorMap.get(figure).getKey()),
+						new Stop(1, figureColorMap.get(figure).getValue()));
+				gc.setFill(linearGradient);
 				gc.fillRect(figure.getLeft(), figure.getTop(),
 						figure.getWidth(), figure.getHeight());
 				gc.strokeRect(figure.getLeft(), figure.getTop(),
 						figure.getWidth(), figure.getHeight());
 
 			} else if (figure.isRound()) {
-				figureShadowMap.get(figure).shadowRound(gc, figure,figureColorMap.get(figure).darker());
+				figureShadowMap.get(figure).shadowRound(gc, figure,figureColorMap.get(figure).getKey().darker());
+				RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+						CycleMethod.NO_CYCLE,
+						new Stop(0, figureColorMap.get(figure).getKey()),
+						new Stop(1, figureColorMap.get(figure).getValue()));
+				gc.setFill(radialGradient);
 				gc.fillOval(figure.getLeft(), figure.getTop(),
 						figure.getWidth(), figure.getHeight());
 				gc.strokeOval(figure.getLeft(), figure.getTop(),
