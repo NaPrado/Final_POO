@@ -9,4 +9,5 @@ public interface Figure {
     public double getHeight();
     public double getWidth();
     public boolean belongs(Point eventPoint);
+    public Point getCenter();
 }

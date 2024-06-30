@@ -65,4 +65,10 @@ public class Rectangle implements Figure{
         return eventPoint.getX() > getTopLeft().getX() && eventPoint.getX() < getBottomRight().getX() &&
                 eventPoint.getY() > getTopLeft().getY() && eventPoint.getY() < getBottomRight().getY();
     }
+
+    @Override
+    public Point getCenter() {
+        return new Point(topLeft.getX()+getWidth()/2, topLeft.getY()+getHeight()/2);
+    }
+
 }

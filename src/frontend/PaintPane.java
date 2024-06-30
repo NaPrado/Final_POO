@@ -232,6 +232,14 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
+		movCentroButton.setOnAction(event -> {
+			if (selectedFigure != null) {
+				Point centre = new Point(canvas.getWidth() / 2, canvas.getHeight() / 2);
+				selectedFigure.move(centre.getDistanceX(selectedFigure.getCenter()), centre.getDistanceY(selectedFigure.getCenter()));
+				redrawCanvas();
+			}
+		});
+
 		setLeft(buttonsBox);
 		setRight(canvas);
 	}
