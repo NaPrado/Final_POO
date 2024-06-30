@@ -27,7 +27,8 @@ public class PaintPane extends BorderPane {
 	Canvas canvas = new Canvas(800, 600);
 	GraphicsContext gc = canvas.getGraphicsContext2D();
 	Color lineColor = Color.BLACK;
-	Color defaultFillColor = Color.YELLOW;
+	Color defaultFillColor1 = Color.YELLOW;
+	Color defaultFillColor2 = Color.ORANGE;
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
@@ -49,10 +50,10 @@ public class PaintPane extends BorderPane {
 	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor);
+	ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor1);
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor);
+	ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor2);
 
 	// Barra Selectora para grosor de borde
 	Slider edgeSlider = new Slider();
@@ -227,6 +228,31 @@ public class PaintPane extends BorderPane {
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				canvasState.remove(selectedFigure);
+				figureColorMap.remove(selectedFigure);
+				figureShadowMap.remove(selectedFigure);
+				figureBorderMap.remove(selectedFigure);
+				selectedFigure = null;
+				redrawCanvas();
+			}
+		});
+		
+		duplicarButton.setOnAction(event -> {
+			if (selectedFigure != null) {
+				Figure dupFigure = selectedFigure.duplicate();
+				canvasState.add(dupFigure);
+				propertiesCopy(selectedFigure, dupFigure);
+				selectedFigure = null;
+				redrawCanvas();
+			}
+		});
+
+		dividirButton.setOnAction(event -> {
+			if (selectedFigure != null) {
+				Pair<Figure, Figure> pairFigure = selectedFigure.split();
+				canvasState.add(pairFigure.getValue());
+				canvasState.add(pairFigure.getKey());
+				propertiesCopy(selectedFigure, pairFigure.getValue());
+				propertiesCopy(pairFigure.getValue(), pairFigure.getKey());
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -244,7 +270,7 @@ public class PaintPane extends BorderPane {
 		setRight(canvas);
 	}
 
-	void redrawCanvas() {
+	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		for(Figure figure : canvasState) {
 			if(figure == selectedFigure) {
@@ -285,7 +311,16 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
-	boolean figureBelongs(Figure figure, Point eventPoint) {
+	private void propertiesCopy(Figure source, Figure destiny) {
+		if (!canvasState.contains(source)) {
+			return;
+		}
+		figureColorMap.put(destiny, figureColorMap.get(source));
+		figureShadowMap.put(destiny, figureShadowMap.get(source));
+		figureBorderMap.put(destiny, figureBorderMap.get(source));
+	}
+
+	private boolean figureBelongs(Figure figure, Point eventPoint) {
 		return figure.belongs(eventPoint);
 	}
 
