@@ -9,12 +9,11 @@ import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.effect.Shadow;
+
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -194,15 +193,19 @@ public class PaintPane extends BorderPane {
 			}
 			gc.setFill(figureColorMap.get(figure));
 			if (figure.isRect()) {
+				figureShadowMap.get(figure).shadowRec(gc,figure,figureColorMap.get(figure).darker());
 				gc.fillRect(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeigth());
+						figure.getWidth(), figure.getHeight());
 				gc.strokeRect(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeigth());
+						figure.getWidth(), figure.getHeight());
+
 			} else if (figure.isRound()) {
+				figureShadowMap.get(figure).shadowRound(gc, figure,figureColorMap.get(figure).darker());
 				gc.fillOval(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeigth());
+						figure.getWidth(), figure.getHeight());
 				gc.strokeOval(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeigth());
+						figure.getWidth(), figure.getHeight());
+
 			}
 		}
 	}

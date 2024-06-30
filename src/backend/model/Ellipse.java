@@ -54,7 +54,7 @@ public class Ellipse implements Figure {
     }
 
     @Override
-    public double getHeigth() {
+    public double getHeight() {
         return getsMinorAxis();
     }
 

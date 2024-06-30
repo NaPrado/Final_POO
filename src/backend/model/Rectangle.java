@@ -51,7 +51,7 @@ public class Rectangle implements Figure{
     }
 
     @Override
-    public double getHeigth() {
+    public double getHeight() {
         return Math.abs(getTopLeft().getY() - getBottomRight().getY());
     }
 

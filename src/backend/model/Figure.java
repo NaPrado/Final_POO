@@ -6,7 +6,7 @@ public interface Figure {
     public boolean isRound();
     public double getLeft();
     public double getTop();
-    public double getHeigth();
+    public double getHeight();
     public double getWidth();
     public boolean belongs(Point eventPoint);
 }
