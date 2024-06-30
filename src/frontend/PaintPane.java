@@ -2,17 +2,19 @@ package frontend;
 
 import backend.CanvasState;
 import backend.model.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+import javafx.scene.effect.Shadow;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +37,17 @@ public class PaintPane extends BorderPane {
 	ToggleButton ellipseButton = new ToggleButton("Elipse");
 	ToggleButton deleteButton = new ToggleButton("Borrar");
 
+	ObservableList<ShadowEnum> shadowsOptions =
+			FXCollections.observableArrayList(
+					ShadowEnum.SIMPLE,
+					ShadowEnum.COLOREADA,
+					ShadowEnum.SIMPLE_INVERSA,
+					ShadowEnum.COLOREADA_INVERSA,
+					ShadowEnum.NINGUNA
+			);
+
+	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
+
 	// Selector de color de relleno
 	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 
@@ -50,6 +63,8 @@ public class PaintPane extends BorderPane {
 	// Colores de relleno de cada figura
 	Map<Figure, Color> figureColorMap = new HashMap<>();
 
+	Map<Figure, ShadowEnum> figureShadowMap = new HashMap<>();
+
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
@@ -61,7 +76,10 @@ public class PaintPane extends BorderPane {
 			tool.setCursor(Cursor.HAND);
 		}
 		VBox buttonsBox = new VBox(10);
-		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones
+		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones de figuras y select
+		buttonsBox.getChildren().add(new Label("Sombras"));
+		buttonsBox.getChildren().add(shadows); // agrega las opciones de sombras
+		shadows.setValue(ShadowEnum.NINGUNA);
 		buttonsBox.getChildren().add(fillColorPicker); // seleccionador de colores (arranca en amarillo)
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
 		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
@@ -97,6 +115,7 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			figureColorMap.put(newFigure, fillColorPicker.getValue());
+			figureShadowMap.put(newFigure, shadows.getValue());
 			canvasState.add(newFigure);
 			startPoint = null;
 			redrawCanvas();
