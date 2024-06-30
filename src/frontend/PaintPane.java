@@ -45,13 +45,26 @@ public class PaintPane extends BorderPane {
 					ShadowEnum.COLOREADA_INVERSA,
 					ShadowEnum.NINGUNA
 			);
+	// Selector de sombras
+	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
 
-	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);  // choice box para las sombras
-
+	// Selector de color de relleno
 	ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor);
 
 	// Selector de color de relleno
 	ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor);
+
+	// Barra Selectora para grosor de borde
+	Slider edgeSlider = new Slider();
+
+	ObservableList<BorderEnum> borderOptions =
+			FXCollections.observableArrayList(
+					BorderEnum.NORMAL,
+					BorderEnum.PUNTEADO_SIMPLE,
+					BorderEnum.PUNTEADO_COMPLEJO
+			);
+	// Selector de sombras
+	ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
 
 	// Dibujar una figura
 	Point startPoint;
@@ -67,6 +80,8 @@ public class PaintPane extends BorderPane {
 
 	Map<Figure, ShadowEnum> figureShadowMap = new HashMap<>();
 
+	Map<Figure,Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
+
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
@@ -81,10 +96,18 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones de figuras y select
 		buttonsBox.getChildren().add(new Label("Sombras"));
 		buttonsBox.getChildren().add(shadows); // agrega las opciones de sombras
-		shadows.setValue(ShadowEnum.NINGUNA);
+		shadows.setValue(ShadowEnum.NINGUNA); //setea ninguna
 		buttonsBox.getChildren().add(new Label("Relleno"));
 		buttonsBox.getChildren().add(fillColorPicker1); // agrega las opciones de relleno
 		buttonsBox.getChildren().add(fillColorPicker2); // seleccionador de colores (arranca en amarillo)
+		buttonsBox.getChildren().add(new Label("Borde"));
+		buttonsBox.getChildren().add(edgeSlider);
+		edgeSlider.setMax(10);
+		edgeSlider.setMin(0.00000000000000000000000001);// creemos que setMin es un menor igual y el grosor no puede ser cero
+		edgeSlider.setValue(5);
+		edgeSlider.setShowTickLabels(true);
+		buttonsBox.getChildren().add(borders);
+		borders.setValue(BorderEnum.NORMAL);
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
 		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
@@ -120,6 +143,7 @@ public class PaintPane extends BorderPane {
 			}
 			figureColorMap.put(newFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 			figureShadowMap.put(newFigure, shadows.getValue());
+			figureBorderMap.put(newFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
 			canvasState.add(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -195,9 +219,12 @@ public class PaintPane extends BorderPane {
 				gc.setStroke(Color.RED);
 				figureShadowMap.put(figure, shadows.getValue());
 				figureColorMap.put(figure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
+				figureBorderMap.put(figure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
 			} else {
 				gc.setStroke(lineColor);
 			}
+			gc.setLineWidth(figureBorderMap.get(figure).getValue());
+			figureBorderMap.get(figure).getKey().setPattern(gc);
 			if (figure.isRect()) {
 				figureShadowMap.get(figure).shadowRec(gc,figure,figureColorMap.get(figure).getKey().darker());
 				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
