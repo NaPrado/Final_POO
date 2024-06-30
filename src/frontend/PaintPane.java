@@ -153,7 +153,7 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		deleteButton.setOnAction(_ -> {
+		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				canvasState.remove(selectedFigure);
 				selectedFigure = null;
