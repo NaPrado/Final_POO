@@ -16,4 +16,11 @@ public class Layer implements Comparable<Layer>{
     public int getLayer() {
         return layer;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Layer layer1 = (Layer) o;
+        return layer == layer1.layer;
+    }
 }

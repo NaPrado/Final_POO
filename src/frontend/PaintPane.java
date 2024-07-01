@@ -184,7 +184,6 @@ public class PaintPane extends BorderPane {
 			figureShadowMap.put(newFigure, shadows.getValue());
 			figureBorderMap.put(newFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
 			figureLayerMap.put(newFigure, layersPane.getChoiceLayer().getValue());
-			canvasState.putIfAbsent(layersPane.getChoiceLayer().getValue(), new Pair<>(layersPane.getMostrarButton().isSelected(), new CanvasState()));
 			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -342,16 +341,19 @@ public class PaintPane extends BorderPane {
 		});
 
 		layersPane.getAddLayerButton().setOnAction(event -> {
-			layersPane.getChoiceLayer().getItems().add(new Layer(layersPane.nextLayer()));
+			Layer newLayer=new Layer(layersPane.nextLayer());
+			layersPane.getChoiceLayer().getItems().add(newLayer);
+			canvasState.put(newLayer,new Pair<>(true, new CanvasState()));
 		});
 
 		layersPane.getRemoveLayerButton().setOnAction(event -> {
-			layersPane.getChoiceLayer().getItems().remove(layersPane.getChoiceLayer().getValue());
-			for (Figure figure : canvasState.get(layersPane.getChoiceLayer().getValue()).getValue()) {
-				deleteFigure(figure);
+			Layer layer=layersPane.getChoiceLayer().getValue();
+			if (layer.getLayer()>3) {
+				layersPane.getChoiceLayer().setValue(new Layer(1));
+				layersPane.getChoiceLayer().getItems().remove(layer);
+				canvasState.remove(layer);
+				redrawCanvas();
 			}
-			canvasState.remove(layersPane.getChoiceLayer().getValue());
-			redrawCanvas();
 		});
 
 		setLeft(buttonsBox);

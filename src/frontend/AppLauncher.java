@@ -18,6 +18,9 @@ public class AppLauncher extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		SortedMap<Layer, Pair<Boolean, CanvasState>> layersMap = new TreeMap<>(); // BackEnd
+		for (int i=1; i<=3 ;i++){
+			layersMap.put( new Layer(i),new Pair<>(true,new CanvasState()));
+		}
 		MainFrame frame = new MainFrame(layersMap);
 		Scene scene = new Scene(frame);
 		primaryStage.setResizable(false);
