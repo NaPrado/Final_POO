@@ -2,6 +2,9 @@ package frontend;
 
 import backend.CanvasState;
 import backend.model.*;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -68,9 +71,9 @@ public class PaintPane extends BorderPane {
 	ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
 
 	// Botones Acciones
-	ToggleButton duplicarButton = new ToggleButton("Duplicar");
-	ToggleButton dividirButton = new ToggleButton("Dividir");
-	ToggleButton movCentroButton = new ToggleButton("Mov. Centro");
+	Button duplicarButton = new Button("Duplicar");
+	Button dividirButton = new Button("Dividir");
+	Button movCentroButton = new Button("Mov. Centro");
 
 	// Dibujar una figura
 	Point startPoint;
@@ -118,16 +121,20 @@ public class PaintPane extends BorderPane {
 		edgeSlider.setMin(0.00000000000000000000000001);// creemos que setMin es un menor igual y el grosor no puede ser cero
 		edgeSlider.setValue(5);
 		edgeSlider.setShowTickLabels(true);
+		edgeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+				figureBorderMap.put(selectedFigure,new Pair<>(borders.getValue(),t1.doubleValue()));
+			}
+		});
 		buttonsBox.getChildren().add(borders);
 		borders.setValue(BorderEnum.NORMAL);
 
 		//Acciones
 		buttonsBox.getChildren().add(new Label("Acciones"));
-		ToggleButton[] actionArr = {duplicarButton, dividirButton, movCentroButton};
-		ToggleGroup actions = new ToggleGroup();
-		for (ToggleButton action : actionArr) {
+		Button[] actionArr = {duplicarButton, dividirButton, movCentroButton};
+		for (Button action : actionArr) {
 			action.setMinWidth(90);
-			action.setToggleGroup(actions);
 			action.setCursor(Cursor.HAND);
 		}
 		buttonsBox.getChildren().addAll(actionArr);
@@ -204,6 +211,11 @@ public class PaintPane extends BorderPane {
 				}
 				if (found) {
 					statusPane.updateStatus(label.toString());
+					shadows.setValue(figureShadowMap.get(selectedFigure));
+					fillColorPicker1.setValue(figureColorMap.get(selectedFigure).getKey());
+					fillColorPicker2.setValue(figureColorMap.get(selectedFigure).getValue());
+					borders.setValue(figureBorderMap.get(selectedFigure).getKey());
+					edgeSlider.setValue(figureBorderMap.get(selectedFigure).getValue());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
@@ -264,6 +276,35 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
+		shadows.setOnAction(event->{
+			if (selectedFigure != null) {
+				figureShadowMap.put(selectedFigure,shadows.getValue());
+				redrawCanvas();
+			}
+		});
+
+		fillColorPicker1.setOnAction(event->{
+			if (selectedFigure != null) {
+				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
+				redrawCanvas();
+			}
+		});
+
+		fillColorPicker2.setOnAction(event->{
+			if (selectedFigure != null) {
+				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
+				redrawCanvas();
+			}
+		});
+		borders.setOnAction(event->{
+			if (selectedFigure != null) {
+				figureBorderMap.put(selectedFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
+				redrawCanvas();
+			}
+		});
+
+
+
 		setLeft(buttonsBox);
 		setRight(canvas);
 	}
@@ -273,9 +314,6 @@ public class PaintPane extends BorderPane {
 		for(Figure figure : canvasState) {
 			if(figure == selectedFigure) {
 				gc.setStroke(Color.RED);
-				figureShadowMap.put(figure, shadows.getValue());
-				figureColorMap.put(figure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
-				figureBorderMap.put(figure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
 			} else {
 				gc.setStroke(lineColor);
 			}
