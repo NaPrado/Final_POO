@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class PaintPane extends BorderPane {
 
+	LayersPane layersPane;
 	// BackEnd
 	CanvasState canvasState;
 
@@ -91,9 +92,10 @@ public class PaintPane extends BorderPane {
 
 	Map<Figure,Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
 
-	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+	public PaintPane(CanvasState canvasState, StatusPane statusPane,LayersPane layersPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
+		this.layersPane=layersPane;
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
@@ -125,6 +127,7 @@ public class PaintPane extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				figureBorderMap.put(selectedFigure,new Pair<>(borders.getValue(),t1.doubleValue()));
+				edgeSlider.setValue(t1.doubleValue());
 				redrawCanvas();
 			}
 		});
@@ -216,7 +219,7 @@ public class PaintPane extends BorderPane {
 					fillColorPicker1.setValue(figureColorMap.get(selectedFigure).getKey());
 					fillColorPicker2.setValue(figureColorMap.get(selectedFigure).getValue());
 					borders.setValue(figureBorderMap.get(selectedFigure).getKey());
-					edgeSlider.setValue(figureBorderMap.get(selectedFigure).getValue());
+					//edgeSlider.setValue(figureBorderMap.get(selectedFigure).getValue());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
