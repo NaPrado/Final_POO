@@ -118,7 +118,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(new Label("Borde"));
 		buttonsBox.getChildren().add(edgeSlider);
 		edgeSlider.setMax(10);
-		edgeSlider.setMin(0.00000000000000000000000001);// creemos que setMin es un menor igual y el grosor no puede ser cero
+		edgeSlider.setMin(0);// creemos que setMin es un menor igual y el grosor no puede ser cero
 		edgeSlider.setValue(5);
 		edgeSlider.setShowTickLabels(true);
 		edgeSlider.valueProperty().addListener(new ChangeListener<Number>() {
