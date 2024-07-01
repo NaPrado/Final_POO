@@ -20,12 +20,13 @@ import javafx.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 public class PaintPane extends BorderPane {
 
 	LayersPane layersPane;
 	// BackEnd
-	CanvasState canvasState;
+	SortedMap<String, Pair<Boolean, CanvasState>> canvasState;
 
 	// Canvas y relacionados
 	Canvas canvas = new Canvas(800, 600);
@@ -92,7 +93,9 @@ public class PaintPane extends BorderPane {
 
 	Map<Figure,Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
 
-	public PaintPane(CanvasState canvasState, StatusPane statusPane,LayersPane layersPane) {
+	Map<Figure, String> figureLayerMap = new HashMap<>();
+
+	public PaintPane(SortedMap<String, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
@@ -180,7 +183,9 @@ public class PaintPane extends BorderPane {
 			figureColorMap.put(newFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 			figureShadowMap.put(newFigure, shadows.getValue());
 			figureBorderMap.put(newFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
-			canvasState.add(newFigure);
+			figureLayerMap.put(newFigure, layersPane.getLayer());
+			canvasState.putIfAbsent(layersPane.getLayer(), new Pair<>(true, new CanvasState()));
+			canvasState.get(layersPane.getLayer()).getValue().add(newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -189,10 +194,12 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState) { // cambiar esto por metodo "encontrar figura"
-				if(figureBelongs(figure, eventPoint)) {
-					found = true;
-					label.append(figure);
+			for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
+				for (Figure figure : canvas.getValue()) { // cambiar esto por metodo "encontrar figura"
+					if (figureBelongs(figure, eventPoint)) {
+						found = true;
+						label.append(figure);
+					}
 				}
 			}
 			if(!found) { // cambiado
@@ -206,11 +213,13 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState) {   // se repite codigo
-					if(figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
-						found = true;
-						selectedFigure = figure;
-						label.append(figure);
+				for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
+					for (Figure figure : canvas.getValue()) {   // se repite codigo
+						if (figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
+							found = true;
+							selectedFigure = figure;
+							label.append(figure);
+						}
 					}
 				}
 				if (found) {
@@ -252,7 +261,7 @@ public class PaintPane extends BorderPane {
 		duplicarButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Figure dupFigure = selectedFigure.duplicate();
-				canvasState.add(dupFigure);
+				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(dupFigure);
 				propertiesCopy(selectedFigure, dupFigure);
 				selectedFigure = null;
 				redrawCanvas();
@@ -262,8 +271,8 @@ public class PaintPane extends BorderPane {
 		dividirButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Pair<Figure, Figure> pairFigure = selectedFigure.split();
-				canvasState.add(pairFigure.getValue());
-				canvasState.add(pairFigure.getKey());
+				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(pairFigure.getValue());
+				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(pairFigure.getKey());
 				propertiesCopy(selectedFigure, pairFigure.getValue());
 				propertiesCopy(pairFigure.getValue(), pairFigure.getKey());
 				deleteFigure(selectedFigure);
@@ -315,49 +324,54 @@ public class PaintPane extends BorderPane {
 
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for(Figure figure : canvasState) {
-			if(figure == selectedFigure) {
-				gc.setStroke(Color.RED);
-			} else {
-				gc.setStroke(lineColor);
-			}
-			gc.setLineWidth(figureBorderMap.get(figure).getValue());
-			figureBorderMap.get(figure).getKey().setPattern(gc);
-			if (figure.isRect()) {
-				figureShadowMap.get(figure).shadowRec(gc,figure,figureColorMap.get(figure).getKey().darker());
-				LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
-						CycleMethod.NO_CYCLE,
-						new Stop(0, figureColorMap.get(figure).getKey()),
-						new Stop(1, figureColorMap.get(figure).getValue()));
-				gc.setFill(linearGradient);
-				gc.fillRect(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeight());
-				gc.strokeRect(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeight());
+		for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
+			if (canvas.getKey()) {
+				for (Figure figure : canvas.getValue()) {
+					if (figure == selectedFigure) {
+						gc.setStroke(Color.RED);
+					} else {
+						gc.setStroke(lineColor);
+					}
+					gc.setLineWidth(figureBorderMap.get(figure).getValue());
+					figureBorderMap.get(figure).getKey().setPattern(gc);
+					if (figure.isRect()) {
+						figureShadowMap.get(figure).shadowRec(gc, figure, figureColorMap.get(figure).getKey().darker());
+						LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+								CycleMethod.NO_CYCLE,
+								new Stop(0, figureColorMap.get(figure).getKey()),
+								new Stop(1, figureColorMap.get(figure).getValue()));
+						gc.setFill(linearGradient);
+						gc.fillRect(figure.getLeft(), figure.getTop(),
+								figure.getWidth(), figure.getHeight());
+						gc.strokeRect(figure.getLeft(), figure.getTop(),
+								figure.getWidth(), figure.getHeight());
 
-			} else if (figure.isRound()) {
-				figureShadowMap.get(figure).shadowRound(gc, figure,figureColorMap.get(figure).getKey().darker());
-				RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
-						CycleMethod.NO_CYCLE,
-						new Stop(0, figureColorMap.get(figure).getKey()),
-						new Stop(1, figureColorMap.get(figure).getValue()));
-				gc.setFill(radialGradient);
-				gc.fillOval(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeight());
-				gc.strokeOval(figure.getLeft(), figure.getTop(),
-						figure.getWidth(), figure.getHeight());
+					} else if (figure.isRound()) {
+						figureShadowMap.get(figure).shadowRound(gc, figure, figureColorMap.get(figure).getKey().darker());
+						RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+								CycleMethod.NO_CYCLE,
+								new Stop(0, figureColorMap.get(figure).getKey()),
+								new Stop(1, figureColorMap.get(figure).getValue()));
+						gc.setFill(radialGradient);
+						gc.fillOval(figure.getLeft(), figure.getTop(),
+								figure.getWidth(), figure.getHeight());
+						gc.strokeOval(figure.getLeft(), figure.getTop(),
+								figure.getWidth(), figure.getHeight());
 
+					}
+				}
 			}
 		}
 	}
 
 	private void propertiesCopy(Figure source, Figure destiny) {
-		if (!canvasState.contains(source)) {
+		if (!canvasState.get(figureLayerMap.get(source)).getValue().contains(source)) {
 			return;
 		}
 		figureColorMap.put(destiny, figureColorMap.get(source));
 		figureShadowMap.put(destiny, figureShadowMap.get(source));
 		figureBorderMap.put(destiny, figureBorderMap.get(source));
+		figureLayerMap.put(destiny, figureLayerMap.get(source));
 	}
 
 	private boolean figureBelongs(Figure figure, Point eventPoint) {
@@ -365,10 +379,11 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void deleteFigure(Figure figure) {
-		canvasState.remove(figure);
+		canvasState.get(figureLayerMap.get(figure)).getValue().remove(figure);
 		figureColorMap.remove(figure);
 		figureShadowMap.remove(figure);
 		figureBorderMap.remove(figure);
+		figureLayerMap.remove(figure);
 	}
 
 }

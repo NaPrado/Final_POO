@@ -4,6 +4,10 @@ import backend.CanvasState;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class AppLauncher extends Application {
 
@@ -13,8 +17,8 @@ public class AppLauncher extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		CanvasState canvasState = new CanvasState(); // BackEnd
-		MainFrame frame = new MainFrame(canvasState);
+		SortedMap<String, Pair<Boolean, CanvasState>> layersMap = new TreeMap<>(); // BackEnd
+		MainFrame frame = new MainFrame(layersMap);
 		Scene scene = new Scene(frame);
 		primaryStage.setResizable(false);
 		primaryStage.setScene(scene);

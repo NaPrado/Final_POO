@@ -11,6 +11,9 @@ import javafx.scene.layout.HBox;
 
 
 public class LayersPane extends BorderPane {
+
+    ChoiceBox<String> capas;
+
     public LayersPane() {
         HBox layersPane = new HBox(10);
         setStyle("-fx-background-color: #999");
@@ -25,7 +28,7 @@ public class LayersPane extends BorderPane {
                         "Capa 2",
                         "Capa 3"
                 );
-        ChoiceBox<String> capas = new ChoiceBox<>(layersOptions);
+        capas = new ChoiceBox<>(layersOptions);
         capas.setValue("Capa 1");
         layersPane.getChildren().add(capas);
         RadioButton mostrarButton = new RadioButton("Mostrar");
@@ -46,4 +49,10 @@ public class LayersPane extends BorderPane {
         layersPane.getChildren().add(removeLayer);
         setCenter(layersPane);
     }
+
+    String getLayer() {
+        return capas.getValue();
+    }
+
+    
 }
