@@ -125,6 +125,7 @@ public class PaintPane extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				figureBorderMap.put(selectedFigure,new Pair<>(borders.getValue(),t1.doubleValue()));
+				redrawCanvas();
 			}
 		});
 		buttonsBox.getChildren().add(borders);
