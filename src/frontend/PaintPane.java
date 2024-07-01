@@ -30,8 +30,8 @@ public class PaintPane extends BorderPane {
 	Canvas canvas = new Canvas(800, 600);
 	GraphicsContext gc = canvas.getGraphicsContext2D();
 	Color lineColor = Color.BLACK;
-	Color defaultFillColor1 = Color.YELLOW;
-	Color defaultFillColor2 = Color.ORANGE;
+	Color defaultFillColor1 = Color.web("#fab900");
+	Color defaultFillColor2 = Color.web("#033f87");
 
 	// Botones Barra Izquierda
 	ToggleButton selectionButton = new ToggleButton("Seleccionar");
