@@ -26,7 +26,7 @@ public class PaintPane extends BorderPane {
 
 	LayersPane layersPane;
 	// BackEnd
-	SortedMap<String, Pair<Boolean, CanvasState>> canvasState;
+	SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState;
 
 	// Canvas y relacionados
 	Canvas canvas = new Canvas(800, 600);
@@ -91,11 +91,11 @@ public class PaintPane extends BorderPane {
 
 	Map<Figure, ShadowEnum> figureShadowMap = new HashMap<>();
 
-	Map<Figure,Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
+	Map<Figure, Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
 
-	Map<Figure, String> figureLayerMap = new HashMap<>();
+	Map<Figure, Layer> figureLayerMap = new HashMap<>();
 
-	public PaintPane(SortedMap<String, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
+	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
@@ -183,9 +183,9 @@ public class PaintPane extends BorderPane {
 			figureColorMap.put(newFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 			figureShadowMap.put(newFigure, shadows.getValue());
 			figureBorderMap.put(newFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
-			figureLayerMap.put(newFigure, layersPane.getLayer());
-			canvasState.putIfAbsent(layersPane.getLayer(), new Pair<>(true, new CanvasState()));
-			canvasState.get(layersPane.getLayer()).getValue().add(newFigure);
+			figureLayerMap.put(newFigure, layersPane.getChoiceLayer().getValue());
+			canvasState.putIfAbsent(layersPane.getChoiceLayer().getValue(), new Pair<>(layersPane.getMostrarButton().isSelected(), new CanvasState()));
+			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -195,10 +195,12 @@ public class PaintPane extends BorderPane {
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
 			for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
-				for (Figure figure : canvas.getValue()) { // cambiar esto por metodo "encontrar figura"
-					if (figureBelongs(figure, eventPoint)) {
-						found = true;
-						label.append(figure);
+				if (canvas.getKey()) {
+					for (Figure figure : canvas.getValue()) { // cambiar esto por metodo "encontrar figura"
+						if (figureBelongs(figure, eventPoint)) {
+							found = true;
+							label.append(figure);
+						}
 					}
 				}
 			}
@@ -214,11 +216,13 @@ public class PaintPane extends BorderPane {
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
-					for (Figure figure : canvas.getValue()) {   // se repite codigo
-						if (figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
-							found = true;
-							selectedFigure = figure;
-							label.append(figure);
+					if (canvas.getKey()) {
+						for (Figure figure : canvas.getValue()) {   // se repite codigo
+							if (figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
+								found = true;
+								selectedFigure = figure;
+								label.append(figure);
+							}
 						}
 					}
 				}
@@ -289,34 +293,66 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		shadows.setOnAction(event->{
+		shadows.setOnAction(event -> {
 			if (selectedFigure != null) {
 				figureShadowMap.put(selectedFigure,shadows.getValue());
 				redrawCanvas();
 			}
 		});
 
-		fillColorPicker1.setOnAction(event->{
+		fillColorPicker1.setOnAction(event -> {
 			if (selectedFigure != null) {
 				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 				redrawCanvas();
 			}
 		});
 
-		fillColorPicker2.setOnAction(event->{
+		fillColorPicker2.setOnAction(event -> {
 			if (selectedFigure != null) {
 				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
 				redrawCanvas();
 			}
 		});
-		borders.setOnAction(event->{
+
+		borders.setOnAction(event -> {
 			if (selectedFigure != null) {
 				figureBorderMap.put(selectedFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
 				redrawCanvas();
 			}
 		});
 
+		layersPane.getMostrarButton().setOnAction(event -> {
+			if (canvasState.containsKey(layersPane.getChoiceLayer().getValue())) {
+				canvasState.put(layersPane.getChoiceLayer().getValue(), new Pair<>(true, canvasState.get(layersPane.getChoiceLayer().getValue()).getValue()));
+				redrawCanvas();
+			}
+		});
 
+		layersPane.getOcultarButton().setOnAction(event -> {
+			if (canvasState.containsKey(layersPane.getChoiceLayer().getValue())) {
+				canvasState.put(layersPane.getChoiceLayer().getValue(), new Pair<>(false, canvasState.get(layersPane.getChoiceLayer().getValue()).getValue()));
+				redrawCanvas();
+			}
+		});
+
+		layersPane.getChoiceLayer().setOnAction(event -> {
+			boolean show = canvasState.getOrDefault(layersPane.getChoiceLayer().getValue(), new Pair<>(true, null)).getKey();
+			layersPane.getMostrarButton().setSelected(show);
+			layersPane.getOcultarButton().setSelected(!show);
+		});
+
+		layersPane.getAddLayerButton().setOnAction(event -> {
+			layersPane.getChoiceLayer().getItems().add(new Layer(layersPane.nextLayer()));
+		});
+
+		layersPane.getRemoveLayerButton().setOnAction(event -> {
+			layersPane.getChoiceLayer().getItems().remove(layersPane.getChoiceLayer().getValue());
+			for (Figure figure : canvasState.get(layersPane.getChoiceLayer().getValue()).getValue()) {
+				deleteFigure(figure);
+			}
+			canvasState.remove(layersPane.getChoiceLayer().getValue());
+			redrawCanvas();
+		});
 
 		setLeft(buttonsBox);
 		setRight(canvas);

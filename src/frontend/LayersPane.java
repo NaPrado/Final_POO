@@ -12,7 +12,14 @@ import javafx.scene.layout.HBox;
 
 public class LayersPane extends BorderPane {
 
-    ChoiceBox<String> capas;
+    ChoiceBox<Layer> capas;
+    int layerCount = 3;
+
+    RadioButton mostrarButton = new RadioButton("Mostrar");
+    RadioButton ocultarButton = new RadioButton("Ocultar");
+
+    Button addLayer = new Button("Agregar Capa");
+    Button removeLayer = new Button("Eliminar Capa");
 
     public LayersPane() {
         HBox layersPane = new HBox(10);
@@ -22,19 +29,17 @@ public class LayersPane extends BorderPane {
         Label capasText=new Label("Capas");
         layersPane.getChildren().add(capasText);
 
-        ObservableList<String> layersOptions =
+        ObservableList<Layer> layersOptions =
                 FXCollections.observableArrayList(
-                        "Capa 1",
-                        "Capa 2",
-                        "Capa 3"
+                        new Layer(1),
+                        new Layer(2),
+                        new Layer(3)
                 );
         capas = new ChoiceBox<>(layersOptions);
-        capas.setValue("Capa 1");
+        capas.setValue(new Layer(1));
         layersPane.getChildren().add(capas);
-        RadioButton mostrarButton = new RadioButton("Mostrar");
         mostrarButton.setSelected(true);
         layersPane.getChildren().add(mostrarButton);
-        RadioButton ocultarButton = new RadioButton("Ocultar");
         RadioButton[] layersArr = {mostrarButton, ocultarButton};
         ToggleGroup tools = new ToggleGroup();
         for (RadioButton tool : layersArr) {
@@ -43,16 +48,33 @@ public class LayersPane extends BorderPane {
             tool.setCursor(Cursor.HAND);
         }
         layersPane.getChildren().add(ocultarButton);
-        Button addLayer = new Button("Agregar Capa");
         layersPane.getChildren().add(addLayer);
-        Button removeLayer = new Button("Eliminar Capa");
         layersPane.getChildren().add(removeLayer);
         setCenter(layersPane);
     }
 
-    String getLayer() {
-        return capas.getValue();
+    public ChoiceBox<Layer> getChoiceLayer() {
+        return capas;
     }
 
-    
+    public RadioButton getMostrarButton() {
+        return mostrarButton;
+    }
+
+    public RadioButton getOcultarButton() {
+        return ocultarButton;
+    }
+
+    public Button getAddLayerButton() {
+        return addLayer;
+    }
+
+    public Button getRemoveLayerButton() {
+        return removeLayer;
+    }
+
+    public int nextLayer() {
+        return ++layerCount;
+    }
+
 }

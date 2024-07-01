@@ -8,7 +8,7 @@ import java.util.SortedMap;
 
 public class MainFrame extends VBox {
 
-    public MainFrame(SortedMap<String, Pair<Boolean, CanvasState>> layersMap) {
+    public MainFrame(SortedMap<Layer, Pair<Boolean, CanvasState>> layersMap) {
         getChildren().add(new AppMenuBar());
         StatusPane statusPane = new StatusPane();
         LayersPane layersPane = new LayersPane();
