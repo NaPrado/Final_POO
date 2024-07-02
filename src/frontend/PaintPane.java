@@ -86,14 +86,7 @@ public class PaintPane extends BorderPane {
 	// StatusBar
 	StatusPane statusPane;
 
-	// Colores de relleno de cada figura
-	Map<Figure, Pair<Color, Color>> figureColorMap = new HashMap<>();
-
-	Map<Figure, ShadowEnum> figureShadowMap = new HashMap<>();
-
-	Map<Figure, Pair<BorderEnum,Double>> figureBorderMap = new HashMap<>();
-
-	Map<Figure, Layer> figureLayerMap = new HashMap<>();
+	Map<Figure, Properties> figureProperties= new HashMap<>();
 
 	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
 		this.canvasState = canvasState;
@@ -129,7 +122,8 @@ public class PaintPane extends BorderPane {
 		edgeSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-				figureBorderMap.put(selectedFigure,new Pair<>(borders.getValue(),t1.doubleValue()));
+				Properties props = figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(), t1.doubleValue());
+				figureProperties.put(selectedFigure,props);
 				edgeSlider.setValue(t1.doubleValue());
 				redrawCanvas();
 			}
@@ -180,10 +174,16 @@ public class PaintPane extends BorderPane {
 			} else {
 				return ;
 			}
-			figureColorMap.put(newFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
-			figureShadowMap.put(newFigure, shadows.getValue());
-			figureBorderMap.put(newFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
-			figureLayerMap.put(newFigure, layersPane.getChoiceLayer().getValue());
+
+			figureProperties.put(newFigure,
+					new Properties(fillColorPicker1.getValue(),
+							fillColorPicker2.getValue(),
+							shadows.getValue(),
+							borders.getValue(),
+							edgeSlider.getValue(),
+							layersPane.getChoiceLayer().getValue()
+					)
+			);
 			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -227,11 +227,11 @@ public class PaintPane extends BorderPane {
 				}
 				if (found) {
 					statusPane.updateStatus(label.toString());
-					shadows.setValue(figureShadowMap.get(selectedFigure));
-					fillColorPicker1.setValue(figureColorMap.get(selectedFigure).getKey());
-					fillColorPicker2.setValue(figureColorMap.get(selectedFigure).getValue());
-					borders.setValue(figureBorderMap.get(selectedFigure).getKey());
-					//edgeSlider.setValue(figureBorderMap.get(selectedFigure).getValue());
+					Properties props=figureProperties.get(selectedFigure);
+					shadows.setValue(props.getFigureShadow());
+					fillColorPicker1.setValue(props.getColors().getKey());
+					fillColorPicker2.setValue(props.getColors().getValue());
+					borders.setValue(props.getFigureBorder().getKey());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
@@ -264,7 +264,6 @@ public class PaintPane extends BorderPane {
 		duplicarButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Figure dupFigure = selectedFigure.duplicate();
-				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(dupFigure);
 				propertiesCopy(selectedFigure, dupFigure);
 				selectedFigure = null;
 				redrawCanvas();
@@ -274,8 +273,9 @@ public class PaintPane extends BorderPane {
 		dividirButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Pair<Figure, Figure> pairFigure = selectedFigure.split();
-				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(pairFigure.getValue());
-				canvasState.get(figureLayerMap.get(selectedFigure)).getValue().add(pairFigure.getKey());
+				CanvasState cState = canvasState.get(figureProperties.get(selectedFigure).getFigureLayer()).getValue();
+				cState.add(pairFigure.getValue());
+				cState.add(pairFigure.getKey());
 				propertiesCopy(selectedFigure, pairFigure.getValue());
 				propertiesCopy(pairFigure.getValue(), pairFigure.getKey());
 				deleteFigure(selectedFigure);
@@ -294,28 +294,28 @@ public class PaintPane extends BorderPane {
 
 		shadows.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureShadowMap.put(selectedFigure,shadows.getValue());
+				figureProperties.get(selectedFigure).setFigureShadow(shadows.getValue());
 				redrawCanvas();
 			}
 		});
 
 		fillColorPicker1.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
+				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
 				redrawCanvas();
 			}
 		});
 
 		fillColorPicker2.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureColorMap.put(selectedFigure, new Pair<>(fillColorPicker1.getValue(), fillColorPicker2.getValue()));
+				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
 				redrawCanvas();
 			}
 		});
 
 		borders.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureBorderMap.put(selectedFigure, new Pair<>(borders.getValue(),edgeSlider.getValue()));
+				figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(),edgeSlider.getValue());
 				redrawCanvas();
 			}
 		});
@@ -370,14 +370,17 @@ public class PaintPane extends BorderPane {
 					} else {
 						gc.setStroke(lineColor);
 					}
-					gc.setLineWidth(figureBorderMap.get(figure).getValue());
-					figureBorderMap.get(figure).getKey().setPattern(gc);
+					Pair<BorderEnum, Double> border = figureProperties.get(figure).getFigureBorder();
+					gc.setLineWidth(border.getValue());
+					border.getKey().setPattern(gc);
+					Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
 					if (figure.isRect()) {
-						figureShadowMap.get(figure).shadowRec(gc, figure, figureColorMap.get(figure).getKey().darker());
+						figureProperties.get(figure).getFigureShadow().shadowRec(gc, figure,colors.getKey().darker());
 						LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
 								CycleMethod.NO_CYCLE,
-								new Stop(0, figureColorMap.get(figure).getKey()),
-								new Stop(1, figureColorMap.get(figure).getValue()));
+								new Stop(0, colors.getKey()),
+								new Stop(1, colors.getValue())
+						);
 						gc.setFill(linearGradient);
 						gc.fillRect(figure.getLeft(), figure.getTop(),
 								figure.getWidth(), figure.getHeight());
@@ -385,11 +388,12 @@ public class PaintPane extends BorderPane {
 								figure.getWidth(), figure.getHeight());
 
 					} else if (figure.isRound()) {
-						figureShadowMap.get(figure).shadowRound(gc, figure, figureColorMap.get(figure).getKey().darker());
+						figureProperties.get(figure).getFigureShadow().shadowRound(gc,figure,colors.getKey().darker());
 						RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
 								CycleMethod.NO_CYCLE,
-								new Stop(0, figureColorMap.get(figure).getKey()),
-								new Stop(1, figureColorMap.get(figure).getValue()));
+								new Stop(0, colors.getKey()),
+								new Stop(1, colors.getValue())
+						);
 						gc.setFill(radialGradient);
 						gc.fillOval(figure.getLeft(), figure.getTop(),
 								figure.getWidth(), figure.getHeight());
@@ -403,13 +407,19 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void propertiesCopy(Figure source, Figure destiny) {
-		if (!canvasState.get(figureLayerMap.get(source)).getValue().contains(source)) {
+		Properties props= figureProperties.get(source);
+		if (!canvasState.get(props.getFigureLayer()).getValue().contains(source)) {
 			return;
 		}
-		figureColorMap.put(destiny, figureColorMap.get(source));
-		figureShadowMap.put(destiny, figureShadowMap.get(source));
-		figureBorderMap.put(destiny, figureBorderMap.get(source));
-		figureLayerMap.put(destiny, figureLayerMap.get(source));
+		canvasState.get(props.getFigureLayer()).getValue().add(destiny);
+		figureProperties.put(destiny,new Properties(
+				props.getColors().getKey(),
+				props.getColors().getValue(),
+				props.getFigureShadow(),
+				props.getFigureBorder().getKey(),
+				props.getFigureBorder().getValue(),
+				props.getFigureLayer()
+		));
 	}
 
 	private boolean figureBelongs(Figure figure, Point eventPoint) {
@@ -417,11 +427,8 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void deleteFigure(Figure figure) {
-		canvasState.get(figureLayerMap.get(figure)).getValue().remove(figure);
-		figureColorMap.remove(figure);
-		figureShadowMap.remove(figure);
-		figureBorderMap.remove(figure);
-		figureLayerMap.remove(figure);
+		canvasState.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
+		figureProperties.remove(figure);
 	}
 
 }
