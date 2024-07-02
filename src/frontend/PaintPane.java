@@ -116,16 +116,18 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(new Label("Borde"));
 		buttonsBox.getChildren().add(edgeSlider);
 		edgeSlider.setMax(10);
-		edgeSlider.setMin(0);// creemos que setMin es un menor igual y el grosor no puede ser cero
+		edgeSlider.setMin(0.00000001);// creemos que setMin es un menor igual y el grosor no puede ser cero
 		edgeSlider.setValue(5);
 		edgeSlider.setShowTickLabels(true);
 		edgeSlider.valueProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-				Properties props = figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(), t1.doubleValue());
-				figureProperties.put(selectedFigure,props);
-				edgeSlider.setValue(t1.doubleValue());
-				redrawCanvas();
+				if(selectedFigure!=null){
+					Properties props = figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(), t1.doubleValue());
+					figureProperties.put(selectedFigure, props);
+					edgeSlider.setValue(t1.doubleValue());
+					redrawCanvas();
+				}
 			}
 		});
 		buttonsBox.getChildren().add(borders);
@@ -232,6 +234,7 @@ public class PaintPane extends BorderPane {
 					fillColorPicker1.setValue(props.getColors().getKey());
 					fillColorPicker2.setValue(props.getColors().getValue());
 					borders.setValue(props.getFigureBorder().getKey());
+					edgeSlider.setValue(props.getFigureBorder().getValue());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
