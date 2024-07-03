@@ -159,19 +159,20 @@ public class PaintPane extends BorderPane {
 				return ;
 			}
 			Figure newFigure;
+			// se puede modularizar??
 			if(rectangleButton.isSelected()) {
 				newFigure = new Rectangle(startPoint, endPoint);
 			}
 			else if(circleButton.isSelected()) {
-				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
+				double circleRadius = Math.abs(endPoint.getDistanceX(startPoint));
 				newFigure = new Circle(startPoint, circleRadius);
 			} else if(squareButton.isSelected()) {
-				double size = Math.abs(endPoint.getX() - startPoint.getX());
+				double size = Math.abs(endPoint.getDistanceX(startPoint));
 				newFigure = new Square(startPoint, size);
 			} else if(ellipseButton.isSelected()) {
 				Point centerPoint = new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2));
-				double sMayorAxis = Math.abs(endPoint.getX() - startPoint.getX());
-				double sMinorAxis = Math.abs(endPoint.getY() - startPoint.getY());
+				double sMayorAxis = Math.abs(endPoint.getDistanceX(startPoint));
+				double sMinorAxis = Math.abs(endPoint.getDistanceY(startPoint));
 				newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
 			} else {
 				return ;
