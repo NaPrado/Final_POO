@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -23,6 +24,7 @@ public class AppLauncher extends Application {
 		}
 		MainFrame frame = new MainFrame(layersMap);
 		Scene scene = new Scene(frame);
+		primaryStage.setTitle("TPF POO - Paint");
 		primaryStage.setResizable(false);
 		primaryStage.setScene(scene);
 		primaryStage.show();

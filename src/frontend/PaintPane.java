@@ -26,7 +26,7 @@ public class PaintPane extends BorderPane {
 
 	LayersPane layersPane;
 	// BackEnd
-	SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState;
+	SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
 
 	// Canvas y relacionados
 	Canvas canvas = new Canvas(800, 600);
@@ -89,7 +89,7 @@ public class PaintPane extends BorderPane {
 	Map<Figure, Properties> figureProperties= new HashMap<>();
 
 	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
-		this.canvasState = canvasState;
+		this.layerPairSortedMap = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
@@ -364,45 +364,20 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void redrawCanvas() {
+		//clear canvas
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
-			if (canvas.getKey()) {
-				for (Figure figure : canvas.getValue()) {
+		for (Pair<Boolean, CanvasState> layer : layerPairSortedMap.values()) {
+			if (layer.getKey()) {
+				for (Figure figure : layer.getValue()) {
 					if (figure == selectedFigure) {
 						gc.setStroke(Color.RED);
 					} else {
 						gc.setStroke(lineColor);
 					}
-					Pair<BorderEnum, Double> border = figureProperties.get(figure).getFigureBorder();
-					gc.setLineWidth(border.getValue());
-					border.getKey().setPattern(gc);
-					Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
 					if (figure.isRect()) {
-						figureProperties.get(figure).getFigureShadow().shadowRec(gc, figure,colors.getKey().darker());
-						LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
-								CycleMethod.NO_CYCLE,
-								new Stop(0, colors.getKey()),
-								new Stop(1, colors.getValue())
-						);
-						gc.setFill(linearGradient);
-						gc.fillRect(figure.getLeft(), figure.getTop(),
-								figure.getWidth(), figure.getHeight());
-						gc.strokeRect(figure.getLeft(), figure.getTop(),
-								figure.getWidth(), figure.getHeight());
-
+						drawRectangularFigure(figure);
 					} else if (figure.isRound()) {
-						figureProperties.get(figure).getFigureShadow().shadowRound(gc,figure,colors.getKey().darker());
-						RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
-								CycleMethod.NO_CYCLE,
-								new Stop(0, colors.getKey()),
-								new Stop(1, colors.getValue())
-						);
-						gc.setFill(radialGradient);
-						gc.fillOval(figure.getLeft(), figure.getTop(),
-								figure.getWidth(), figure.getHeight());
-						gc.strokeOval(figure.getLeft(), figure.getTop(),
-								figure.getWidth(), figure.getHeight());
-
+						drawOvalFigure(figure);
 					}
 				}
 			}
@@ -411,10 +386,10 @@ public class PaintPane extends BorderPane {
 
 	private void propertiesCopy(Figure source, Figure destiny) {
 		Properties props= figureProperties.get(source);
-		if (!canvasState.get(props.getFigureLayer()).getValue().contains(source)) {
+		if (!layerPairSortedMap.get(props.getFigureLayer()).getValue().contains(source)) {
 			return;
 		}
-		canvasState.get(props.getFigureLayer()).getValue().add(destiny);
+		layerPairSortedMap.get(props.getFigureLayer()).getValue().add(destiny);
 		figureProperties.put(destiny,new Properties(
 				props.getColors().getKey(),
 				props.getColors().getValue(),
@@ -430,8 +405,43 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void deleteFigure(Figure figure) {
-		canvasState.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
+		layerPairSortedMap.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
 		figureProperties.remove(figure);
 	}
 
+	private void drawRectangularFigure(Figure figure){
+		drawEdgeFigure(figure);
+		Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
+		figureProperties.get(figure).getFigureShadow().shadowRec(gc, figure,colors.getKey().darker());
+		LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
+				CycleMethod.NO_CYCLE,
+				new Stop(0, colors.getKey()),
+				new Stop(1, colors.getValue())
+		);
+		gc.setFill(linearGradient);
+		gc.fillRect(figure.getLeft(), figure.getTop(),
+				figure.getWidth(), figure.getHeight());
+		gc.strokeRect(figure.getLeft(), figure.getTop(),
+				figure.getWidth(), figure.getHeight());
+	}
+	private void drawOvalFigure(Figure figure) {
+		drawEdgeFigure(figure);
+		Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
+		figureProperties.get(figure).getFigureShadow().shadowRound(gc,figure,colors.getKey().darker());
+		RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+				CycleMethod.NO_CYCLE,
+				new Stop(0, colors.getKey()),
+				new Stop(1, colors.getValue())
+		);
+		gc.setFill(radialGradient);
+		gc.fillOval(figure.getLeft(), figure.getTop(),
+				figure.getWidth(), figure.getHeight());
+		gc.strokeOval(figure.getLeft(), figure.getTop(),
+				figure.getWidth(), figure.getHeight());
+	}
+	private void drawEdgeFigure(Figure figure) {
+		Pair<BorderEnum, Double> border = figureProperties.get(figure).getFigureBorder();
+		gc.setLineWidth(border.getValue());
+		border.getKey().setPattern(gc);
+	}
 }
