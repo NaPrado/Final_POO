@@ -152,14 +152,16 @@ class src.frontend.LayersPane extends javafx.scene.layout.BorderPane{
     +   int nextLayer()
 }
 class src.frontend.Properties{
-    -   Pair<Color, Color> colors;
-    -   ShadowEnum figureShadow;
-    -   Pair<BorderEnum,Double> figureBorder;
-    -   Layer figureLayer;
+    -   Pair<Color, Color> colors
+    -   ShadowEnum figureShadow
+    -   BorderEnum figureBorderStyle
+    -   double figureBorderWidth
+    -   Layer figureLayer
     +   Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorder,double width,Layer figureLayer)
     ..Setters..
     +   Properties setColors(Color c1, Color c2)
-    +   Properties setFigureBorder(BorderEnum figureBorder,double width)
+    +   Properties setFigureBorderStyle(BorderEnum figureBorderStyle)
+    +   Properties setFigureBorderWidth(double figureBorderWidth)
     +   Properties setFigureShadow(ShadowEnum figureShadow)
     ..Getters..
     +   Pair<Color, Color> getColors()
@@ -167,7 +169,7 @@ class src.frontend.Properties{
     +   Pair<BorderEnum, Double> getFigureBorder()
     +   Layer getFigureLayer()
 }
-class src.frontend.ShadowEnum{
+enum src.frontend.ShadowEnum{
     SIMPLE
     COLOREADA
     SIMPLE_INVERSA

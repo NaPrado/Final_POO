@@ -123,7 +123,7 @@ public class PaintPane extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				if(selectedFigure!=null){
-					Properties props = figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(), t1.doubleValue());
+					Properties props = figureProperties.get(selectedFigure).setFigureBorderWidth(t1.doubleValue());
 					figureProperties.put(selectedFigure, props);
 					edgeSlider.setValue(t1.doubleValue());
 					redrawCanvas();
@@ -230,11 +230,11 @@ public class PaintPane extends BorderPane {
 				if (found) {
 					statusPane.updateStatus(label.toString());
 					Properties props=figureProperties.get(selectedFigure);
+					edgeSlider.setValue(props.getFigureBorderWidth());
+					borders.setValue(props.getFigureBorderStyle());
 					shadows.setValue(props.getFigureShadow());
 					fillColorPicker1.setValue(props.getColors().getKey());
 					fillColorPicker2.setValue(props.getColors().getValue());
-					borders.setValue(props.getFigureBorder().getKey());
-					edgeSlider.setValue(props.getFigureBorder().getValue());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
@@ -318,7 +318,7 @@ public class PaintPane extends BorderPane {
 
 		borders.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setFigureBorder(borders.getValue(),edgeSlider.getValue());
+				figureProperties.get(selectedFigure).setFigureBorderStyle(borders.getValue());
 				redrawCanvas();
 			}
 		});
@@ -394,8 +394,8 @@ public class PaintPane extends BorderPane {
 				props.getColors().getKey(),
 				props.getColors().getValue(),
 				props.getFigureShadow(),
-				props.getFigureBorder().getKey(),
-				props.getFigureBorder().getValue(),
+				props.getFigureBorderStyle(),
+				props.getFigureBorderWidth(),
 				props.getFigureLayer()
 		));
 	}
@@ -440,8 +440,7 @@ public class PaintPane extends BorderPane {
 				figure.getWidth(), figure.getHeight());
 	}
 	private void drawEdgeFigure(Figure figure) {
-		Pair<BorderEnum, Double> border = figureProperties.get(figure).getFigureBorder();
-		gc.setLineWidth(border.getValue());
-		border.getKey().setPattern(gc);
+		gc.setLineWidth(figureProperties.get(figure).getFigureBorderWidth());
+		figureProperties.get(figure).getFigureBorderStyle().setPattern(gc);
 	}
 }

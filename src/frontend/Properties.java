@@ -10,13 +10,15 @@ import java.util.Map;
 public class Properties {
     private Pair<Color, Color> colors;
     private ShadowEnum figureShadow;
-    private Pair<BorderEnum,Double> figureBorder;
+    private BorderEnum figureBorderStyle;
+    private double figureBorderWidth;
     private Layer figureLayer;
 
-    Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorder,double width,Layer figureLayer){
+    Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorderStyle,double figureBorderWidth,Layer figureLayer){
         colors = new Pair<>(c1,c2);
         this.figureShadow = figureShadow;
-        this.figureBorder = new Pair<>(figureBorder,width);
+        this.figureBorderStyle = figureBorderStyle;
+        this.figureBorderWidth = figureBorderWidth;
         this.figureLayer = figureLayer;
     }
 
@@ -27,8 +29,13 @@ public class Properties {
         return this;
     }
 
-    public Properties setFigureBorder(BorderEnum figureBorder,double width) {
-        this.figureBorder = new Pair<>(figureBorder,width);
+    public Properties setFigureBorderStyle(BorderEnum figureBorderStyle) {
+        this.figureBorderStyle = figureBorderStyle;
+        return this;
+    }
+
+    public Properties setFigureBorderWidth(double figureBorderWidth) {
+        this.figureBorderWidth = figureBorderWidth;
         return this;
     }
 
@@ -45,9 +52,11 @@ public class Properties {
         return figureShadow;
     }
 
-    public Pair<BorderEnum, Double> getFigureBorder() {
-        return figureBorder;
+    public BorderEnum getFigureBorderStyle() {
+        return figureBorderStyle;
     }
+
+    public double getFigureBorderWidth() {return figureBorderWidth;}
 
     public Layer getFigureLayer() {
         return figureLayer;
