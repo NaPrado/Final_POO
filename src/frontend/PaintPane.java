@@ -197,8 +197,8 @@ public class PaintPane extends BorderPane {
 			StringBuilder label = new StringBuilder();
 			for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
 				if (canvas.getKey()) {
-					for (Figure figure : canvas.getValue()) { // cambiar esto por metodo "encontrar figura"
-						if (figureBelongs(figure, eventPoint)) {
+					for (Figure figure : canvas.getValue()) {
+						if (figure.belongs(eventPoint)) {
 							found = true;
 							label.append(figure);
 						}
@@ -218,8 +218,8 @@ public class PaintPane extends BorderPane {
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
 					if (canvas.getKey()) {
-						for (Figure figure : canvas.getValue()) {   // se repite codigo
-							if (figureBelongs(figure, eventPoint)) {     // cambiar esto por metodo "encontrar figura"
+						for (Figure figure : canvas.getValue()) {
+							if (figure.belongs(eventPoint)){
 								found = true;
 								selectedFigure = figure;
 								label.append(figure);
@@ -400,9 +400,9 @@ public class PaintPane extends BorderPane {
 		));
 	}
 
-	private boolean figureBelongs(Figure figure, Point eventPoint) {
-		return figure.belongs(eventPoint);
-	}
+	//private boolean figureBelongs(Figure figure, Point eventPoint) {
+	//	return figure.belongs(eventPoint);
+	//}
 
 	private void deleteFigure(Figure figure) {
 		layerPairSortedMap.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
