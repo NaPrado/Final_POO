@@ -7,7 +7,6 @@ public interface Figure {
     public static int OFFSET = 10;
     public void move(double diffX, double diffY);
     public boolean isRect();
-    public boolean isRound();
     public double getLeft();
     public double getTop();
     public double getHeight();

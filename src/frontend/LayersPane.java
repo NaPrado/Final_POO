@@ -12,14 +12,14 @@ import javafx.scene.layout.HBox;
 
 public class LayersPane extends BorderPane {
 
-    ChoiceBox<Layer> capas;
-    int layerCount = 3;
+    private ChoiceBox<Layer> capas;
+    private int layerCount = 3;
 
-    RadioButton mostrarButton = new RadioButton("Mostrar");
-    RadioButton ocultarButton = new RadioButton("Ocultar");
+    private final RadioButton mostrarButton = new RadioButton("Mostrar");
+    private final RadioButton ocultarButton = new RadioButton("Ocultar");
 
-    Button addLayer = new Button("Agregar Capa");
-    Button removeLayer = new Button("Eliminar Capa");
+    private final Button addLayer = new Button("Agregar Capa");
+    private final Button removeLayer = new Button("Eliminar Capa");
 
     public LayersPane() {
         HBox layersPane = new HBox(10);

@@ -31,10 +31,7 @@ public class Properties {
         this.figureBorder = new Pair<>(figureBorder,width);
         return this;
     }
-    public Properties setFigureLayer(Layer figureLayer) {
-        this.figureLayer = figureLayer;
-        return this;
-    }
+
     public Properties setFigureShadow(ShadowEnum figureShadow) {
         this.figureShadow = figureShadow;
         return this;

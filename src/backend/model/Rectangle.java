@@ -38,11 +38,6 @@ public class Rectangle implements Figure{
     }
 
     @Override
-    public boolean isRound() {
-        return false;
-    }
-
-    @Override
     public double getLeft() {
         return getTopLeft().getX();
     }

@@ -1,7 +1,7 @@
 package frontend;
 
 public class Layer implements Comparable<Layer>{
-    int layer;
+    private final int layer;
     public Layer(int layer) {
         this.layer = layer;
     }

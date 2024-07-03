@@ -4,7 +4,7 @@ import javafx.util.Pair;
 
 public class Ellipse implements Figure {
 
-    protected final Point centerPoint;
+    protected Point centerPoint;
     private final double sMayorAxis, sMinorAxis;
 
     public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis) {
@@ -38,11 +38,6 @@ public class Ellipse implements Figure {
     @Override
     public boolean isRect() {
         return false;
-    }
-
-    @Override
-    public boolean isRound() {
-        return true;
     }
 
     @Override

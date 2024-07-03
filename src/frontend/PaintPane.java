@@ -376,7 +376,7 @@ public class PaintPane extends BorderPane {
 					}
 					if (figure.isRect()) {
 						drawRectangularFigure(figure);
-					} else if (figure.isRound()) {
+					} else {
 						drawOvalFigure(figure);
 					}
 				}
