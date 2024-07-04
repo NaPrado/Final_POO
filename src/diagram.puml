@@ -187,4 +187,41 @@ class src.frontend.StatusPane extends javafx.scene.layout.BorderPane{
     +   StatusPane()
     +   void updateStatus(String text)
 }
+class src.frontend.PaintPane extends javafx.scene.layout.BorderPane{
+    +   LayersPane layersPane
+    +   SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap
+    +   Canvas canvas
+    +   GraphicsContext gc
+    +   Color lineColor
+    +   Color defaultFillColor1
+    +   Color defaultFillColor2
+    +   ToggleButton selectionButton
+    +   ToggleButton rectangleButton
+    +   ToggleButton circleButton
+    +   ToggleButton squareButton
+    +   ToggleButton ellipseButton
+    +   ToggleButton deleteButton
+    +   ObservableList<ShadowEnum> shadowsOptions
+    +   ChoiceBox<ShadowEnum> shadows
+    +   ColorPicker fillColorPicker1
+    +   ColorPicker fillColorPicker2
+    +   Slider edgeSlider
+    +   ObservableList<BorderEnum> borderOptions
+    +   ChoiceBox<BorderEnum> borders
+    +   Button duplicarButton
+    +   Button dividirButton
+    +   Button movCentroButton
+    +   Point startPoint
+    +   Figure selectedFigure
+    +   StatusPane statusPane
+    +   Map<Figure, Properties> figureProperties
+    +   PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane)
+    -   private void redrawCanvas()
+    -   void propertiesCopy(Figure source, Figure destiny)
+    -   boolean figureBelongs(Figure figure, Point eventPoint)
+    -   void deleteFigure(Figure figure)
+    -   void drawRectangularFigure(Figure figure)
+    -   void drawOvalFigure(Figure figure)
+    -   void drawEdgeFigure(Figure figure)
+}
 @enduml
