@@ -79,6 +79,11 @@ public class PaintPane extends BorderPane {
 		public Button duplicarButton = new Button("Duplicar");
 		public Button dividirButton = new Button("Dividir");
 		public Button movCentroButton = new Button("Mov. Centro");
+		public Button guardarButton = new Button("Guardar");
+
+		// Text Area
+
+		public TextArea etiquetasDeForma= new TextArea();
 	//finaliza botonera barra izquierda
 
 	// Dibujar una figura
@@ -153,7 +158,20 @@ public class PaintPane extends BorderPane {
 		}
 		buttonsBox.getChildren().addAll(actionArr);
 
+		//Etiquetas
+		buttonsBox.getChildren().add(new Label("Etiquetas"));
+
+		guardarButton.setMinWidth(90);
+		guardarButton.setCursor(Cursor.HAND);
+		buttonsBox.getChildren().add(guardarButton);
+
+
+		etiquetasDeForma.setMinWidth(90);
+		etiquetasDeForma.setMaxHeight(90);
+		etiquetasDeForma.setCursor(Cursor.HAND);
+		buttonsBox.getChildren().add(etiquetasDeForma);
 		//Parametros
+
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
 		buttonsBox.setStyle("-fx-background-color: #999"); // color de fondo
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
@@ -334,6 +352,9 @@ public class PaintPane extends BorderPane {
 				selectedFigure.move(centre.getDistanceX(selectedFigure.getCenter()), centre.getDistanceY(selectedFigure.getCenter()));
 				redrawCanvas();
 			}
+		});
+		guardarButton.setOnAction(event->{
+
 		});
 
 		layersPane.getMostrarButton().setOnAction(event -> {

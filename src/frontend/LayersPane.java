@@ -17,6 +17,8 @@ public class LayersPane extends BorderPane {
 
     private final RadioButton mostrarButton = new RadioButton("Mostrar");
     private final RadioButton ocultarButton = new RadioButton("Ocultar");
+    private final RadioButton todasButton = new RadioButton("Todas");
+    private final RadioButton soloButton = new RadioButton("Solo");
 
     private final Button addLayer = new Button("Agregar Capa");
     private final Button removeLayer = new Button("Eliminar Capa");
@@ -50,6 +52,8 @@ public class LayersPane extends BorderPane {
         layersPane.getChildren().add(ocultarButton);
         layersPane.getChildren().add(addLayer);
         layersPane.getChildren().add(removeLayer);
+        layersPane.getChildren().add(todasButton);
+        layersPane.getChildren().add(soloButton);
         setCenter(layersPane);
     }
 
@@ -59,6 +63,14 @@ public class LayersPane extends BorderPane {
 
     public RadioButton getMostrarButton() {
         return mostrarButton;
+    }
+
+    public RadioButton getSoloButton() {
+        return soloButton;
+    }
+
+    public RadioButton getTodasButton() {
+        return todasButton;
     }
 
     public RadioButton getOcultarButton() {
