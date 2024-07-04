@@ -24,26 +24,26 @@ import java.util.SortedMap;
 
 public class PaintPane extends BorderPane {
 
-	LayersPane layersPane;
+	public LayersPane layersPane;
 	// BackEnd
-	SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
+	public SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
 
 	// Canvas y relacionados
-	Canvas canvas = new Canvas(800, 600);
-	GraphicsContext gc = canvas.getGraphicsContext2D();
-	Color lineColor = Color.BLACK;
-	Color defaultFillColor1 = Color.web("#fab900");
-	Color defaultFillColor2 = Color.web("#033f87");
+	public Canvas canvas = new Canvas(800, 600);
+	public GraphicsContext gc = canvas.getGraphicsContext2D();
+	public Color lineColor = Color.BLACK;
+	public Color defaultFillColor1 = Color.web("#fab900");
+	public Color defaultFillColor2 = Color.web("#033f87");
 
 	// Botones Barra Izquierda
-	ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	ToggleButton rectangleButton = new ToggleButton("Rectángulo");
-	ToggleButton circleButton = new ToggleButton("Círculo");
-	ToggleButton squareButton = new ToggleButton("Cuadrado");
-	ToggleButton ellipseButton = new ToggleButton("Elipse");
-	ToggleButton deleteButton = new ToggleButton("Borrar");
+	public ToggleButton selectionButton = new ToggleButton("Seleccionar");
+	public ToggleButton rectangleButton = new ToggleButton("Rectángulo");
+	public ToggleButton circleButton = new ToggleButton("Círculo");
+	public ToggleButton squareButton = new ToggleButton("Cuadrado");
+	public ToggleButton ellipseButton = new ToggleButton("Elipse");
+	public ToggleButton deleteButton = new ToggleButton("Borrar");
 
-	ObservableList<ShadowEnum> shadowsOptions =
+	public ObservableList<ShadowEnum> shadowsOptions =
 			FXCollections.observableArrayList(
 					ShadowEnum.SIMPLE,
 					ShadowEnum.COLOREADA,
@@ -52,41 +52,41 @@ public class PaintPane extends BorderPane {
 					ShadowEnum.NINGUNA
 			);
 	// Selector de sombras
-	ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
+	public ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor1);
+	public ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor1);
 
 	// Selector de color de relleno
-	ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor2);
+	public ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor2);
 
 	// Barra Selectora para grosor de borde
-	Slider edgeSlider = new Slider();
+	public Slider edgeSlider = new Slider();
 
-	ObservableList<BorderEnum> borderOptions =
+	public ObservableList<BorderEnum> borderOptions =
 			FXCollections.observableArrayList(
 					BorderEnum.NORMAL,
 					BorderEnum.PUNTEADO_SIMPLE,
 					BorderEnum.PUNTEADO_COMPLEJO
 			);
 	// Selector de sombras
-	ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
+	public ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
 
 	// Botones Acciones
-	Button duplicarButton = new Button("Duplicar");
-	Button dividirButton = new Button("Dividir");
-	Button movCentroButton = new Button("Mov. Centro");
+	public Button duplicarButton = new Button("Duplicar");
+	public Button dividirButton = new Button("Dividir");
+	public Button movCentroButton = new Button("Mov. Centro");
 
 	// Dibujar una figura
-	Point startPoint;
+	public Point startPoint;
 
 	// Seleccionar una figura
-	Figure selectedFigure;
+	public Figure selectedFigure;
 
 	// StatusBar
-	StatusPane statusPane;
+	public StatusPane statusPane;
 
-	Map<Figure, Properties> figureProperties= new HashMap<>();
+	public Map<Figure, Properties> figureProperties= new HashMap<>();
 
 	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
 		this.layerPairSortedMap = canvasState;
