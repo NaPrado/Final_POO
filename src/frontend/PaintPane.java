@@ -24,7 +24,9 @@ import java.util.SortedMap;
 
 public class PaintPane extends BorderPane {
 
+	// panel superior el de las capas
 	public LayersPane layersPane;
+
 	// BackEnd
 	public SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
 
@@ -35,47 +37,49 @@ public class PaintPane extends BorderPane {
 	public Color defaultFillColor1 = Color.web("#fab900");
 	public Color defaultFillColor2 = Color.web("#033f87");
 
-	// Botones Barra Izquierda
-	public ToggleButton selectionButton = new ToggleButton("Seleccionar");
-	public ToggleButton rectangleButton = new ToggleButton("Rectángulo");
-	public ToggleButton circleButton = new ToggleButton("Círculo");
-	public ToggleButton squareButton = new ToggleButton("Cuadrado");
-	public ToggleButton ellipseButton = new ToggleButton("Elipse");
-	public ToggleButton deleteButton = new ToggleButton("Borrar");
+	//arranca botonera barra izquierda
+		// Botones Barra Izquierda
+		public ToggleButton selectionButton = new ToggleButton("Seleccionar");
+		public ToggleButton rectangleButton = new ToggleButton("Rectángulo");
+		public ToggleButton circleButton = new ToggleButton("Círculo");
+		public ToggleButton squareButton = new ToggleButton("Cuadrado");
+		public ToggleButton ellipseButton = new ToggleButton("Elipse");
+		public ToggleButton deleteButton = new ToggleButton("Borrar");
 
-	public ObservableList<ShadowEnum> shadowsOptions =
-			FXCollections.observableArrayList(
-					ShadowEnum.SIMPLE,
-					ShadowEnum.COLOREADA,
-					ShadowEnum.SIMPLE_INVERSA,
-					ShadowEnum.COLOREADA_INVERSA,
-					ShadowEnum.NINGUNA
-			);
-	// Selector de sombras
-	public ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
+		// Opciones de sombras
+		public ObservableList<ShadowEnum> shadowsOptions =
+				FXCollections.observableArrayList(
+						ShadowEnum.SIMPLE,
+						ShadowEnum.COLOREADA,
+						ShadowEnum.SIMPLE_INVERSA,
+						ShadowEnum.COLOREADA_INVERSA,
+						ShadowEnum.NINGUNA
+				);
+		// Selector de sombras
+		public ChoiceBox<ShadowEnum> shadows = new ChoiceBox<>(shadowsOptions);
 
-	// Selector de color de relleno
-	public ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor1);
+		// Selectores de color de relleno
+		public ColorPicker fillColorPicker1 = new ColorPicker(defaultFillColor1);
+		public ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor2);
 
-	// Selector de color de relleno
-	public ColorPicker fillColorPicker2 = new ColorPicker(defaultFillColor2);
+		// Barra Selectora para grosor de borde
+		public Slider edgeSlider = new Slider();
 
-	// Barra Selectora para grosor de borde
-	public Slider edgeSlider = new Slider();
+		// Opciones de bordes
+		public ObservableList<BorderEnum> borderOptions =
+				FXCollections.observableArrayList(
+						BorderEnum.NORMAL,
+						BorderEnum.PUNTEADO_SIMPLE,
+						BorderEnum.PUNTEADO_COMPLEJO
+				);
+		// Selector de bordes
+		public ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
 
-	public ObservableList<BorderEnum> borderOptions =
-			FXCollections.observableArrayList(
-					BorderEnum.NORMAL,
-					BorderEnum.PUNTEADO_SIMPLE,
-					BorderEnum.PUNTEADO_COMPLEJO
-			);
-	// Selector de sombras
-	public ChoiceBox<BorderEnum> borders = new ChoiceBox<>(borderOptions);
-
-	// Botones Acciones
-	public Button duplicarButton = new Button("Duplicar");
-	public Button dividirButton = new Button("Dividir");
-	public Button movCentroButton = new Button("Mov. Centro");
+		// Botones Acciones
+		public Button duplicarButton = new Button("Duplicar");
+		public Button dividirButton = new Button("Dividir");
+		public Button movCentroButton = new Button("Mov. Centro");
+	//finaliza botonera barra izquierda
 
 	// Dibujar una figura
 	public Point startPoint;
@@ -86,12 +90,19 @@ public class PaintPane extends BorderPane {
 	// StatusBar
 	public StatusPane statusPane;
 
+	// Aca se guardan las propiedades de cada figura
 	public Map<Figure, Properties> figureProperties= new HashMap<>();
 
+	private static final double MAX=10;
+	private static final double MIN=0.00000001;
+
 	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
+
 		this.layerPairSortedMap = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
+
+		VBox buttonsBox = new VBox(10);
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
@@ -99,7 +110,6 @@ public class PaintPane extends BorderPane {
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
 		}
-		VBox buttonsBox = new VBox(10);
 		buttonsBox.getChildren().addAll(toolsArr); // agrega los botones de figuras y select
 
 		//Sombras
@@ -109,17 +119,18 @@ public class PaintPane extends BorderPane {
 
 		//Relleno
 		buttonsBox.getChildren().add(new Label("Relleno"));
-		buttonsBox.getChildren().add(fillColorPicker1); // agrega las opciones de relleno
-		buttonsBox.getChildren().add(fillColorPicker2); // seleccionador de colores (arranca en amarillo)
+		buttonsBox.getChildren().add(fillColorPicker1); // agrega las opciones de relleno para el primer color
+		buttonsBox.getChildren().add(fillColorPicker2); // agrega las opciones de relleno para el segundo color
 
 		//Borde
 		buttonsBox.getChildren().add(new Label("Borde"));
 		buttonsBox.getChildren().add(edgeSlider);
-		edgeSlider.setMax(10);
-		edgeSlider.setMin(0.00000001);// creemos que setMin es un menor igual y el grosor no puede ser cero
+		edgeSlider.setMax(MAX);
+		edgeSlider.setMin(MIN);
 		edgeSlider.setValue(5);
 		edgeSlider.setShowTickLabels(true);
 		edgeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+			//se añade comportamiento al slider para poder modificar el grosor de la figura en tiempo real
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				if(selectedFigure!=null){
@@ -148,7 +159,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.setPrefWidth(100); // ancho de la barra lateral
 		gc.setLineWidth(1); // borde de las figuras
 
-		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(), event.getY()));
+		canvas.setOnMousePressed(event -> startPoint = new Point(event.getX(),event.getY()));
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
@@ -187,6 +198,7 @@ public class PaintPane extends BorderPane {
 							layersPane.getChoiceLayer().getValue()
 					)
 			);
+
 			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
 			startPoint = null;
 			redrawCanvas();
@@ -257,6 +269,34 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
+		shadows.setOnAction(event -> {
+			if (selectedFigure != null) {
+				figureProperties.get(selectedFigure).setFigureShadow(shadows.getValue());
+				redrawCanvas();
+			}
+		});
+
+		fillColorPicker1.setOnAction(event -> {
+			if (selectedFigure != null) {
+				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
+				redrawCanvas();
+			}
+		});
+
+		fillColorPicker2.setOnAction(event -> {
+			if (selectedFigure != null) {
+				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
+				redrawCanvas();
+			}
+		});
+
+		borders.setOnAction(event -> {
+			if (selectedFigure != null) {
+				figureProperties.get(selectedFigure).setFigureBorderStyle(borders.getValue());
+				redrawCanvas();
+			}
+		});
+
 		deleteButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				deleteFigure(selectedFigure);
@@ -264,7 +304,7 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
-		
+
 		duplicarButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Figure dupFigure = selectedFigure.duplicate();
@@ -292,34 +332,6 @@ public class PaintPane extends BorderPane {
 			if (selectedFigure != null) {
 				Point centre = new Point(canvas.getWidth() / 2, canvas.getHeight() / 2);
 				selectedFigure.move(centre.getDistanceX(selectedFigure.getCenter()), centre.getDistanceY(selectedFigure.getCenter()));
-				redrawCanvas();
-			}
-		});
-
-		shadows.setOnAction(event -> {
-			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setFigureShadow(shadows.getValue());
-				redrawCanvas();
-			}
-		});
-
-		fillColorPicker1.setOnAction(event -> {
-			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
-				redrawCanvas();
-			}
-		});
-
-		fillColorPicker2.setOnAction(event -> {
-			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
-				redrawCanvas();
-			}
-		});
-
-		borders.setOnAction(event -> {
-			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setFigureBorderStyle(borders.getValue());
 				redrawCanvas();
 			}
 		});
@@ -400,10 +412,6 @@ public class PaintPane extends BorderPane {
 				props.getFigureLayer()
 		));
 	}
-
-	//private boolean figureBelongs(Figure figure, Point eventPoint) {
-	//	return figure.belongs(eventPoint);
-	//}
 
 	private void deleteFigure(Figure figure) {
 		layerPairSortedMap.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
