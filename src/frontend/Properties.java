@@ -4,8 +4,7 @@ import backend.model.Figure;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Properties {
     private Pair<Color, Color> colors;
@@ -13,6 +12,7 @@ public class Properties {
     private BorderEnum figureBorderStyle;
     private double figureBorderWidth;
     private Layer figureLayer;
+    private SortedSet<String> tags;
 
     Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorderStyle,double figureBorderWidth,Layer figureLayer){
         colors = new Pair<>(c1,c2);
@@ -20,9 +20,19 @@ public class Properties {
         this.figureBorderStyle = figureBorderStyle;
         this.figureBorderWidth = figureBorderWidth;
         this.figureLayer = figureLayer;
+        tags=new TreeSet<>();
     }
 
+    public void setTags(ArrayList<String> tagstoAdd){
+        for(String word: tagstoAdd){
+            String[] words = word.split("[\\s\\n]+");
+            tags.addAll(Arrays.asList(words));
+        }
+    }
 
+    public SortedSet<String> getTags(){
+        return tags;
+    }
 
     public Properties setColors(Color c1, Color c2) {
         this.colors = new Pair<>(c1,c2);

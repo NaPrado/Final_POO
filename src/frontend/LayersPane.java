@@ -20,7 +20,7 @@ public class LayersPane extends BorderPane {
     private final RadioButton ocultarButton = new RadioButton("Ocultar");
     private final RadioButton todasButton = new RadioButton("Todas");
     private final RadioButton soloButton = new RadioButton("Solo");
-    private final TextField filter =new TextField();
+    private final TextField filterByLabel =new TextField();
     private final Button addLayer = new Button("Agregar Capa");
     private final Button removeLayer = new Button("Eliminar Capa");
 
@@ -52,7 +52,7 @@ public class LayersPane extends BorderPane {
             tool.setCursor(Cursor.HAND);
         }
         firstRow.getChildren().addAll(capasText,capas,layersArr[0],layersArr[1], addLayer, removeLayer);
-        secondRow.getChildren().addAll(todasButton,soloButton,filter);
+        secondRow.getChildren().addAll(todasButton,soloButton,filterByLabel);
         layersPane.getChildren().addAll(firstRow,secondRow);
         setCenter(layersPane);
     }
@@ -88,5 +88,6 @@ public class LayersPane extends BorderPane {
     public int nextLayer() {
         return ++layerCount;
     }
+    public TextField getfilterByLabel(){return filterByLabel;}
 
 }
