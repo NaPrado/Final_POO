@@ -8,6 +8,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 
 public class LayersPane extends BorderPane {
@@ -19,18 +20,19 @@ public class LayersPane extends BorderPane {
     private final RadioButton ocultarButton = new RadioButton("Ocultar");
     private final RadioButton todasButton = new RadioButton("Todas");
     private final RadioButton soloButton = new RadioButton("Solo");
-
+    private final TextField filter =new TextField();
     private final Button addLayer = new Button("Agregar Capa");
     private final Button removeLayer = new Button("Eliminar Capa");
 
     public LayersPane() {
-        HBox layersPane = new HBox(10);
+        VBox layersPane = new VBox(10);
         setStyle("-fx-background-color: #999");
         layersPane.setAlignment(Pos.CENTER);
         layersPane.setPadding(new Insets(5));
         Label capasText=new Label("Capas");
         layersPane.getChildren().add(capasText);
-
+        HBox firstRow = new HBox(10);
+        HBox secondRow = new HBox(10);
         ObservableList<Layer> layersOptions =
                 FXCollections.observableArrayList(
                         new Layer(1),
@@ -49,11 +51,9 @@ public class LayersPane extends BorderPane {
             tool.setToggleGroup(tools);
             tool.setCursor(Cursor.HAND);
         }
-        layersPane.getChildren().add(ocultarButton);
-        layersPane.getChildren().add(addLayer);
-        layersPane.getChildren().add(removeLayer);
-        layersPane.getChildren().add(todasButton);
-        layersPane.getChildren().add(soloButton);
+        firstRow.getChildren().addAll(capasText,capas,layersArr[0],layersArr[1], addLayer, removeLayer);
+        secondRow.getChildren().addAll(todasButton,soloButton,filter);
+        layersPane.getChildren().addAll(firstRow,secondRow);
         setCenter(layersPane);
     }
 

@@ -354,7 +354,9 @@ public class PaintPane extends BorderPane {
 			}
 		});
 		guardarButton.setOnAction(event->{
+			if (selectedFigure != null) {
 
+			}
 		});
 
 		layersPane.getMostrarButton().setOnAction(event -> {
