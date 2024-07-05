@@ -173,7 +173,9 @@ public class PaintPane extends BorderPane {
 		labelPane.getFilterByLabel().textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				labelPane.setInputFilter(newValue.split("[\\s|\n]")[0]);
+				if (!newValue.isEmpty()) {
+					labelPane.setInputFilter(newValue.split("[\\s|\n]+")[0]);
+				}
 				redrawCanvas();
 			}
 		});
@@ -428,7 +430,7 @@ public class PaintPane extends BorderPane {
 		for (Pair<Boolean, ArrayList<FrontFigure>> layer : layerPairSortedMap.values()) {
 			if (layer.getKey()) {
 				for (FrontFigure figure : layer.getValue()) {
-					if ((labelPane.getSoloButton().isSelected() && selectedFigure.getProperties().getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
+					if ((labelPane.getSoloButton().isSelected() && figure.getProperties().getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
 						if (figure == selectedFigure) {
 							gc.setStroke(Color.RED);
 						} else {
