@@ -2,14 +2,15 @@
 
 interface src.backend.model.Figure{
     +   {static} int OFFSET = 10
-    +   void move(double diffX, double diffY)
-    +   boolean isRect()
+    .. getters ..
     +   double getLeft()
     +   double getTop()
     +   double getHeight()
     +   double getWidth()
-    +   boolean belongs(Point eventPoint)
     +   Point getCenter()
+.. Other methods ..
+    +   boolean belongs(Point eventPoint)
+    +   void move(double diffX, double diffY)
     +   Figure duplicate()
     +   Pair<Figure,Figure> split()
 }
@@ -17,72 +18,40 @@ class src.backend.model.Ellipse implements src.backend.model.Figure{
     #   Point centerPoint
     -   double sMayorAxis
     -   double sMinorAxis
-    --
     +   Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis)
+    .. getters ..
     +   Point getCenterPoint()
     +   double getsMayorAxis()
     +   double getsMinorAxis()
     +   String toString()
-    .. Override methods ..
-    +   void move(double diffX, double diffY)
-    +   boolean isRect()
-    +   double getLeft()
-    +   double getTop()
-    +   double getHeight()
-    +   double getWidth()
-    +   boolean belongs(Point eventPoint)
-    +   Point getCenter()
-    +   Figure duplicate()
-    +   Pair<Figure,Figure> split()
 }
 class src.backend.model.Circle extends src.backend.model.Ellipse{
     +   Circle(Point centerPoint, double radius)
+    .. getters ..
     +   double getRadius()
-    .. Override methods ..
-    +   String toString()
-    +   boolean belongs(Point eventPoint)
-    +   Figure duplicate()
-    +   Pair<Figure, Figure> split()
 }
 class src.backend.model.Rectangle implements src.backend.model.Figure{
     -   Point topLeft
     -   Point bottomRight
-    --
     +   Rectangle(Point topLeft, Point bottomRight)
+    .. getters ..
     +   Point getTopLeft()
     +   Point getBottomRight()
     +   String toString()
-    .. Override methods ..
-    +   void move(double diffX, double diffY)
-    +   boolean isRect()
-    +   double getLeft()
-    +   double getTop()
-    +   double getHeight()
-    +   double getWidth()
-    +   boolean belongs(Point eventPoint)
-    +   Point getCenter()
-    +   Figure duplicate()
-    +   Pair<Figure,Figure> split()
 }
 class src.backend.model.Square extends src.backend.model.Rectangle{
     -   double size
-    --
     +   Square(Point topLeft, double size)
-    .. Override methods ..
-    +   String toString()
-    +   Figure duplicate()
-    +   Pair<Figure, Figure> split()
 }
 class src.backend.model.Point{
     -   double x
     -   double y
-    --
-    +   String toString()
     .. getters ..
     +   double getX()
     +   double getY()
     +   double getDistanceX(Point point)
     +   double getDistanceY(Point point)
+    +   String toString()
     .. setters ..
     +   void setX(double x)
     +   void setY(double y)
@@ -90,37 +59,18 @@ class src.backend.model.Point{
 Ellipse::centerPoint *-right- Point : contains
 Rectangle::topLeft *-left- Point : contains
 Rectangle::bottomRight *-left- Point : contains
-class java.util.ArrayList<src.backend.model.Figure>
-class src.backend.CanvasState extends java.util.ArrayList<src.backend.model.Figure>{
-}
-class src.frontend.AppLauncher extends javafx.application.Application{
+class src.frontend.main.AppLauncher extends javafx.application.Application{
     + void main(String[] args)
     --
     + void start(Stage primaryStage)
 }
-note left of src.frontend.AppLauncher::start
-    Se crean:
-    SortedMap<Layer, Pair<Boolean, CanvasState>> layersMap = new TreeMap<>()
-    MainFrame frame = new MainFrame(layersMap)
-    Scene scene = new Scene(frame)
-end note
-class src.frontend.MainFrame extends javafx.scene.layout.VBox{
+class src.frontend.main.MainFrame extends javafx.scene.layout.VBox{
     +   MainFrame(SortedMap<Layer, Pair<Boolean, CanvasState>> layersMap)}
 }
-note left of src.frontend.MainFrame::SortedMap
-    Se crean:
-    new AppMenuBar()
-    StatusPane statusPane = new StatusPane()
-    LayersPane layersPane = new LayersPane()
-    y se añaden al MainFrame
-end note
-class src.frontend.AppMenuBar extends javafx.scene.control.MenuBar{
+class src.frontend.main.AppMenuBar extends javafx.scene.control.MenuBar{
     +   AppMenuBar()
 }
-note left of src.frontend.AppMenuBar::AppMenuBar
-    Settea la barra superior del programa
-end note
-enum src.frontend.BorderEnum{
+enum src.frontend.properties.BorderEnum{
     NORMAL
     PUNTEADO_SIMPLE
     PUNTEADO_COMPLEJO
@@ -128,22 +78,25 @@ enum src.frontend.BorderEnum{
     +   void setPattern(GraphicsContext gc)
 }
 interface java.lang.Comparable<T>
-class src.frontend.Layer implements java.lang.Comparable<Layer>{
+class src.frontend.properties.Layer implements java.lang.Comparable<Layer>{
     -   int layer
     +   Layer(int layer)
+    +   int getLayer()
     +   String toString()
     +   int compareTo(Layer o)
-    +   int getLayer()
     +   boolean equals(Object o)
 }
-class src.frontend.LayersPane extends javafx.scene.layout.BorderPane{
-    -   ChoiceBox<Layer> capas
+class src.frontend.panes.LayersPane extends javafx.scene.layout.BorderPane{
     -   int layerCount = 3
+    .. ButtonsBox ..
+    -   ChoiceBox<Layer> capas
     -   RadioButton mostrarButton
     -   RadioButton ocultarButton
     -   Button addLayer
     -   Button removeLayer
+--
     +   LayersPane()
+    .. getters ..
     +   ChoiceBox<Layer> getChoiceLayer()
     +   RadioButton getMostrarButton()
     +   RadioButton getOcultarButton()
@@ -151,7 +104,7 @@ class src.frontend.LayersPane extends javafx.scene.layout.BorderPane{
     +   Button getRemoveLayerButton()
     +   int nextLayer()
 }
-class src.frontend.Properties{
+class src.frontend.properties.Properties{
     -   Pair<Color, Color> colors
     -   ShadowEnum figureShadow
     -   BorderEnum figureBorderStyle
@@ -169,7 +122,7 @@ class src.frontend.Properties{
     +   Pair<BorderEnum, Double> getFigureBorder()
     +   Layer getFigureLayer()
 }
-enum src.frontend.ShadowEnum{
+enum src.frontend.properties.ShadowEnum{
     SIMPLE
     COLOREADA
     SIMPLE_INVERSA
@@ -182,13 +135,15 @@ enum src.frontend.ShadowEnum{
     +   void shadowRec(GraphicsContext gc, Figure figure,Color c)
     +   shadowRound(GraphicsContext gc, Figure figure,Color c)
 }
-class src.frontend.StatusPane extends javafx.scene.layout.BorderPane{
+class src.frontend.panes.StatusPane extends javafx.scene.layout.BorderPane{
     -   Label statusLabel
     +   StatusPane()
     +   void updateStatus(String text)
 }
-class src.frontend.PaintPane extends javafx.scene.layout.BorderPane{
+class src.frontend.panes.PaintPane extends javafx.scene.layout.BorderPane{
+    .. panes ..
     +   LayersPane layersPane
+    +   StatusPane statusPane
     +   SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap
     +   Canvas canvas
     +   GraphicsContext gc
@@ -213,15 +168,42 @@ class src.frontend.PaintPane extends javafx.scene.layout.BorderPane{
     +   Button movCentroButton
     +   Point startPoint
     +   Figure selectedFigure
-    +   StatusPane statusPane
     +   Map<Figure, Properties> figureProperties
+    --
     +   PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane)
-    -   private void redrawCanvas()
+    -   void redrawCanvas()
     -   void propertiesCopy(Figure source, Figure destiny)
     -   boolean figureBelongs(Figure figure, Point eventPoint)
     -   void deleteFigure(Figure figure)
     -   void drawRectangularFigure(Figure figure)
     -   void drawOvalFigure(Figure figure)
     -   void drawEdgeFigure(Figure figure)
+}
+interface src.frontend.front_figures.Drawable{
+    +   void drawEdge(GraphicsContext gc)
+    +   void draw(GraphicsContext gc)
+    +   Properties getProperties()
+}
+abstract class src.frontend.front_figures.FrontFigure implements src.frontend.front_figures.Drawable{
+    #   Figure figure
+    #   Properties properties
+    +   void setProperties(Properties properties)
+    +   Boolean belongs(Point point)
+    +   void move(double diffX,double diffY)
+    +   Pair<FrontFigure,FrontFigure> split()
+}
+src.backend.model.Figure --* src.frontend.front_figures.FrontFigure::figure
+src.frontend.properties.Properties --* src.frontend.front_figures.FrontFigure::properties
+abstract class src.frontend.front_figures.FrontRectangularFigure extends src.frontend.front_figures.FrontFigure{
+}
+abstract class src.frontend.front_figures.FrontOvalFigure extends src.frontend.front_figures.FrontFigure{
+}
+class src.frontend.front_figures.FrontRectangle extends src.frontend.front_figures.FrontRectangularFigure{
+}
+class src.frontend.front_figures.FrontSquare extends src.frontend.front_figures.FrontRectangularFigure{
+}
+class src.frontend.front_figures.FrontCircle extends src.frontend.front_figures.FrontOvalFigure{
+}
+class src.frontend.front_figures.FrontEllipse extends src.frontend.front_figures.FrontOvalFigure{
 }
 @enduml
