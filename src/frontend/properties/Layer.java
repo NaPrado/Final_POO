@@ -1,4 +1,4 @@
-package frontend;
+package frontend.properties;
 
 public class Layer implements Comparable<Layer>{
     private final int layer;
