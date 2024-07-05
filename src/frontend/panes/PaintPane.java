@@ -346,8 +346,8 @@ public class PaintPane extends BorderPane {
 
 		dividirButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				Pair<Figure, Figure> pairFigure = selectedFigure.split();
-				ArrayList<FrontFigure> cState = canvasState.get(figureProperties.get(selectedFigure).getFigureLayer()).getValue();
+				Pair<FrontFigure, FrontFigure> pairFigure = selectedFigure.split();
+				ArrayList<FrontFigure> cState = canvasState.get(selectedFigure.getProperties().getFigureLayer()).getValue();
 				cState.add(pairFigure.getValue());
 				cState.add(pairFigure.getKey());
 				propertiesCopy(selectedFigure, pairFigure.getValue());
@@ -414,7 +414,7 @@ public class PaintPane extends BorderPane {
 
 		guardarButton.setOnAction(event->{
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setTags(etiquetasDeForma.getText());
+				selectedFigure.getProperties().setTags(etiquetasDeForma.getText());
 			}
 		});
 
@@ -428,7 +428,7 @@ public class PaintPane extends BorderPane {
 		for (Pair<Boolean, ArrayList<FrontFigure>> layer : layerPairSortedMap.values()) {
 			if (layer.getKey()) {
 				for (FrontFigure figure : layer.getValue()) {
-					if ((labelPane.getSoloButton().isSelected() && figureProperties.get(figure).getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
+					if ((labelPane.getSoloButton().isSelected() && selectedFigure.getProperties().getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
 						if (figure == selectedFigure) {
 							gc.setStroke(Color.RED);
 						} else {
@@ -451,8 +451,7 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void deleteFigure(FrontFigure figure) {
-		layerPairSortedMap.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
-		figureProperties.remove(figure);
+		layerPairSortedMap.get(figure.getProperties().getFigureLayer()).getValue().remove(figure);
 	}
 
 }
