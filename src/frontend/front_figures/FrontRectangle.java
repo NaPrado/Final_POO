@@ -21,7 +21,8 @@ public class FrontRectangle extends FrontRectangularFigure{
 
     @Override
     public Pair<FrontFigure, FrontFigure> split() {
-        return null;
+        Pair<Figure, Figure> figureSplit = figure.split();
+        return new Pair<>(new FrontRectangle(figureSplit.getKey(), copyProperties()), new FrontRectangle(figureSplit.getValue(), copyProperties()));
     }
 
 }
