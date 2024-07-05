@@ -1,5 +1,7 @@
 package frontend.front_figures;
 
+import backend.model.Figure;
+import frontend.properties.Properties;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -8,6 +10,11 @@ import javafx.scene.paint.Stop;
 import javafx.util.Pair;
 
 public abstract class FrontOvalFigure extends FrontFigure {
+
+    FrontOvalFigure(Figure figure, Properties properties) {
+        super(figure, properties);
+    }
+
     @Override
     public void draw(GraphicsContext gc) {
         drawEdge(gc);

@@ -33,6 +33,10 @@ public abstract class FrontFigure implements Drawable {
         figure.move(diffX, diffY);
     }
 
+    public Point getCenter() {
+        return figure.getCenter();
+    }
+
     public Properties copyProperties() {
         Properties toReturn = new Properties(
                 properties.getColors().getKey(),

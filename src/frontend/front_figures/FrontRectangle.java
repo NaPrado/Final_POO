@@ -6,7 +6,6 @@ import javafx.util.Pair;
 
 public class FrontRectangle extends FrontRectangularFigure{
 
-    @Override
     public FrontRectangle(Figure figure, Properties properties) {
         super(figure, properties);
     }
@@ -17,11 +16,7 @@ public class FrontRectangle extends FrontRectangularFigure{
 
     @Override
     public FrontFigure duplicate() {
-        Figure copyFigure = figure.duplicate();
-        Properties properties = copyProperties();
-        FrontFigure toReturn = new FrontRectangle(copyFigure, properties);
-        return toReturn;
-
+        return new FrontRectangle(figure.duplicate(), copyProperties());
     }
 
     @Override

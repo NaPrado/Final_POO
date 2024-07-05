@@ -14,6 +14,7 @@ public abstract class FrontRectangularFigure extends FrontFigure {
     FrontRectangularFigure(Figure figure, Properties properties) {
         super(figure, properties);
     }
+
     public void draw(GraphicsContext gc) {
         drawEdge(gc);
         Pair<Color, Color> colors = properties.getColors();
