@@ -1,6 +1,5 @@
 package frontend;
 
-import backend.model.Figure;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -12,7 +11,7 @@ public class Properties {
     private BorderEnum figureBorderStyle;
     private double figureBorderWidth;
     private Layer figureLayer;
-    private SortedSet<String> tags;
+    private Set<String> tags;
 
     Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorderStyle,double figureBorderWidth,Layer figureLayer){
         colors = new Pair<>(c1,c2);
@@ -20,17 +19,16 @@ public class Properties {
         this.figureBorderStyle = figureBorderStyle;
         this.figureBorderWidth = figureBorderWidth;
         this.figureLayer = figureLayer;
-        tags=new TreeSet<>();
+        tags=new HashSet<>();
     }
 
-    public void setTags(ArrayList<String> tagstoAdd){
-        for(String word: tagstoAdd){
-            String[] words = word.split("[\\s\\n]+");
-            tags.addAll(Arrays.asList(words));
-        }
+    public void setTags(String tagsToAdd){
+        Set<String> newtags = new HashSet<>();
+        newtags.addAll(Arrays.asList(tagsToAdd.split("[\\s|\\n]+")));
+        tags=newtags;
     }
 
-    public SortedSet<String> getTags(){
+    public Set<String> getTags(){
         return tags;
     }
 

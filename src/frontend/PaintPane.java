@@ -32,7 +32,7 @@ public class PaintPane extends BorderPane {
 	public SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
 
 	// Canvas y relacionados
-	public Canvas canvas = new Canvas(800, 600);
+	public Canvas canvas = new Canvas(800, 800);
 	public GraphicsContext gc = canvas.getGraphicsContext2D();
 	public Color lineColor = Color.BLACK;
 	public Color defaultFillColor1 = Color.web("#fab900");
@@ -103,7 +103,6 @@ public class PaintPane extends BorderPane {
 	private static final double MIN=0.00000001;
 
 	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LabelsPane labelPane,LayersPane layersPane) {
-
 		this.layerPairSortedMap = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
@@ -162,16 +161,21 @@ public class PaintPane extends BorderPane {
 
 		//Etiquetas
 		buttonsBox.getChildren().add(new Label("Etiquetas"));
-
 		guardarButton.setMinWidth(90);
 		guardarButton.setCursor(Cursor.HAND);
 		buttonsBox.getChildren().add(guardarButton);
-
-
 		etiquetasDeForma.setMinWidth(90);
 		etiquetasDeForma.setMaxHeight(90);
 		etiquetasDeForma.setCursor(Cursor.HAND);
 		buttonsBox.getChildren().add(etiquetasDeForma);
+		labelPane.getFilterByLabel().textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				labelPane.setInputFilter(newValue);
+				redrawCanvas();
+			}
+		});
+
 		//Parametros
 
 		buttonsBox.setPadding(new Insets(5)); // alto de la barra lateral
@@ -268,9 +272,16 @@ public class PaintPane extends BorderPane {
 					shadows.setValue(props.getFigureShadow());
 					fillColorPicker1.setValue(props.getColors().getKey());
 					fillColorPicker2.setValue(props.getColors().getValue());
+					StringBuilder showLabels = new StringBuilder();
+					for (String e:props.getTags()){
+						showLabels.append(e);
+						showLabels.append("\n");
+					}
+					etiquetasDeForma.setText(showLabels.toString());
 				} else {
 					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
+					etiquetasDeForma.setText("");
 				}
 				redrawCanvas();
 			}
@@ -391,11 +402,20 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
-		labelPane.getfilterByLabel();
-		labelPane.getSoloButton();
-		labelPane.getfilterByLabel();
+
+
+		labelPane.getSoloButton().setOnAction(event->{
+			redrawCanvas();
+		});
+		labelPane.getTodasButton().setOnAction(event->{
+			redrawCanvas();
+		});
+
+
+
 		guardarButton.setOnAction(event->{
 			if (selectedFigure != null) {
+				figureProperties.get(selectedFigure).setTags(etiquetasDeForma.getText());
 			}
 		});
 
@@ -409,15 +429,17 @@ public class PaintPane extends BorderPane {
 		for (Pair<Boolean, CanvasState> layer : layerPairSortedMap.values()) {
 			if (layer.getKey()) {
 				for (Figure figure : layer.getValue()) {
-					if (figure == selectedFigure) {
-						gc.setStroke(Color.RED);
-					} else {
-						gc.setStroke(lineColor);
-					}
-					if (figure.isRect()) {
+					if ((labelPane.getSoloButton().isSelected() && figureProperties.get(figure).getTags().contains(labelPane.getInputFilter()))||(labelPane.getTodasButton().isSelected())){
+						if (figure == selectedFigure) {
+							gc.setStroke(Color.RED);
+						} else {
+							gc.setStroke(lineColor);
+						}
+						if (figure.isRect()) {
 						drawRectangularFigure(figure);
-					} else {
+						} else {
 						drawOvalFigure(figure);
+						}
 					}
 				}
 			}
