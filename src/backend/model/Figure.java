@@ -1,6 +1,5 @@
 package backend.model;
 
-import backend.CanvasState;
 import javafx.util.Pair;
 
 public interface Figure {
