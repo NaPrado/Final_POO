@@ -1,8 +1,8 @@
-# Final_POO
-TP Final de POO
+# Final Programacion Orientada a Objetos
+Trabajo Practico Final
 
 ## Descripción del proyecto:
-La idea principal del proyecto es diseñar una aplicación con JavaFX, separando bien el frontend del backend. Además se debe poder reutilizar el front para otro back implementado con otra tecnologia diferente a JavaFX.
+La idea principal del proyecto es diseñar una aplicación con JavaFX, separando bien el frontend del backend y utilizando apropiadamente el paradigma de la programación orientada a objetos(POO). Además se debe poder reutilizar el front para otro back implementado con otra tecnologia diferente a JavaFX.
 
 La aplicación debe permitir dibujar figuras (Circulos, elipses, rectangulos y cuadrados), con distintos colores (con posibilidad de un gradiente entre 2 colores), con distintos tipos de sombras, grosor de linea del borde variable y distintos tipos de borde. Además el programa debe tener un sistema de capas y uno de etiquetas.
 
@@ -33,8 +33,10 @@ El boton dividir, elimina la figura seleccionada y genera 2 nuevas de mitad de a
 El boton Mov. Centro como indica su nombre mueve la figura seleccionada al centro del lienzo.
 ### 3. Capas: Crear y Mostrar
 En la barra superior se incluyen varios botones que permiten la creacion y eliminacion de capas. Estas se pueden hacer visibles como invisibles con los botones mostrar y ocultar, respectivamente.
-> [!IMPORTANT]
+> [!NOTE]
 > Las primeras tres capas no son eliminables.
+### 4. Etiquetas: Mostrar y Ocultar
+En la barra superior se encuentra una barra de texto que permite mostrar las figuras que tienen la etiqueta que se escriba en ella, siendo considerado etiqueta a la primer palabra ingresada. Esta funcionalidad se activa con el boton solo y se desactiva con todas.
 
 ## Integrantes:
     Mateo Buela             - 64680 - mbuela@itba.edu.ar
