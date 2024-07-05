@@ -13,7 +13,7 @@ public class FrontElipse extends FrontOvalFigure {
     }
 
     public FrontElipse(Point centerPoint, double sMayorAxis, double sMinorAxis, Properties properties) {
-        super(new Ellipse(centerPoint, sMayorAxis, sMayorAxis), properties);
+        super(new Ellipse(centerPoint, sMayorAxis, sMinorAxis), properties);
     }
 
     @Override
