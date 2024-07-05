@@ -1,6 +1,6 @@
 package frontend.front_figures;
 
-import frontend.Properties;
+import frontend.properties.Properties;
 import javafx.scene.canvas.GraphicsContext;
 
 public interface Drawable {
@@ -10,11 +10,8 @@ public interface Drawable {
         getProperties().getFigureBorderStyle().setPattern(gc);
     }
 
+    void draw(GraphicsContext gc);
+
     Properties getProperties();
-
-    default void draw(GraphicsContext gc) {
-        drawEdge(gc);
-
-    }
 
 }

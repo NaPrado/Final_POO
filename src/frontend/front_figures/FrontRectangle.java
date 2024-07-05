@@ -1,40 +1,32 @@
 package frontend.front_figures;
 
-import backend.CanvasState;
 import backend.model.*;
-import frontend.Properties;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
+import frontend.properties.Properties;
 import javafx.util.Pair;
 
-public class FrontRectangle extends FrontFigure{
+public class FrontRectangle extends FrontRectangularFigure{
 
-    FrontRectangle(Point topLeft, Point bottomRight, Properties properties) {
-        this.figure = new Rectangle(topLeft, bottomRight);
-        this.properties = properties;
+    @Override
+    public FrontRectangle(Figure figure, Properties properties) {
+        super(figure, properties);
+    }
+
+    public FrontRectangle(Point topLeft, Point bottomRight, Properties properties) {
+        super(new Rectangle(topLeft, bottomRight),properties);
     }
 
     @Override
-    public Properties getProperties() {
-        return properties;
+    public FrontFigure duplicate() {
+        Figure copyFigure = figure.duplicate();
+        Properties properties = copyProperties();
+        FrontFigure toReturn = new FrontRectangle(copyFigure, properties);
+        return toReturn;
+
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
-        drawEdge(gc);
-        Pair<Color, Color> colors = properties.getColors();
-        properties.getFigureShadow().shadowRec(gc, figure, colors.getKey().darker());
-        LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
-                CycleMethod.NO_CYCLE,
-                new Stop(0, colors.getKey()),
-                new Stop(1, colors.getValue())
-        );
-        gc.setFill(linearGradient);
-        gc.fillRect(figure.getLeft(), figure.getTop(), figure.getWidth(), figure.getHeight());
-        gc.strokeRect(figure.getLeft(), figure.getTop(), figure.getWidth(), figure.getHeight());
+    public Pair<FrontFigure, FrontFigure> split() {
+        return null;
     }
 
 }

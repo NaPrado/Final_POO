@@ -1,9 +1,14 @@
 package frontend.panes;
 
-import backend.CanvasState;
 import backend.model.*;
 
-import frontend.*;
+import frontend.front_figures.*;
+import frontend.front_figures.FrontCircle;
+import frontend.front_figures.FrontFigure;
+import frontend.properties.BorderEnum;
+import frontend.properties.Layer;
+import frontend.properties.Properties;
+import frontend.properties.ShadowEnum;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,8 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.*;
 import javafx.util.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.SortedMap;
 
 public class PaintPane extends BorderPane {
@@ -30,7 +34,7 @@ public class PaintPane extends BorderPane {
 	public LabelsPane labelPane;
 
 	// BackEnd
-	public SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
+	public SortedMap<Layer, Pair<Boolean, ArrayList<FrontFigure>>> layerPairSortedMap;
 
 	// Canvas y relacionados
 	public Canvas canvas = new Canvas(800, 800);
@@ -92,18 +96,15 @@ public class PaintPane extends BorderPane {
 	public Point startPoint;
 
 	// Seleccionar una figura
-	public Figure selectedFigure;
+	public FrontFigure selectedFigure;
 
 	// StatusBar
 	public StatusPane statusPane;
 
-	// Aca se guardan las propiedades de cada figura
-	public Map<Figure, Properties> figureProperties= new HashMap<>();
-
 	private static final double MAX=10;
 	private static final double MIN=0.00000001;
 
-	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LabelsPane labelPane,LayersPane layersPane) {
+	public PaintPane(SortedMap<Layer, Pair<Boolean, ArrayList<FrontFigure>>> canvasState, StatusPane statusPane, LabelsPane labelPane,LayersPane layersPane) {
 		this.layerPairSortedMap = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
@@ -141,8 +142,8 @@ public class PaintPane extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				if(selectedFigure!=null){
-					Properties props = figureProperties.get(selectedFigure).setFigureBorderWidth(t1.doubleValue());
-					figureProperties.put(selectedFigure, props);
+					Properties props = selectedFigure.getProperties().setFigureBorderWidth(t1.doubleValue());
+					selectedFigure.setProperties(props);
 					edgeSlider.setValue(t1.doubleValue());
 					redrawCanvas();
 				}
@@ -172,7 +173,7 @@ public class PaintPane extends BorderPane {
 		labelPane.getFilterByLabel().textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				labelPane.setInputFilter(newValue);
+				labelPane.setInputFilter(newValue.split("[\\s|\n]")[0]);
 				redrawCanvas();
 			}
 		});
@@ -194,35 +195,32 @@ public class PaintPane extends BorderPane {
 			if(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
-			Figure newFigure;
+			FrontFigure newFigure;
+			Properties properties = new Properties(fillColorPicker1.getValue(),
+					fillColorPicker2.getValue(),
+					shadows.getValue(),
+					borders.getValue(),
+					edgeSlider.getValue(),
+					layersPane.getChoiceLayer().getValue()
+			);
 			// se puede modularizar??
 			if(rectangleButton.isSelected()) {
-				newFigure = new Rectangle(startPoint, endPoint);
+				newFigure = new FrontRectangle(startPoint, endPoint, properties);
 			}
 			else if(circleButton.isSelected()) {
 				double circleRadius = Math.abs(endPoint.getDistanceX(startPoint));
-				newFigure = new Circle(startPoint, circleRadius);
+				newFigure = new FrontCircle(startPoint, circleRadius, properties);
 			} else if(squareButton.isSelected()) {
 				double size = Math.abs(endPoint.getDistanceX(startPoint));
-				newFigure = new Square(startPoint, size);
+				newFigure = new FrontSquare(startPoint, size, properties);
 			} else if(ellipseButton.isSelected()) {
 				Point centerPoint = new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2));
 				double sMayorAxis = Math.abs(endPoint.getDistanceX(startPoint));
 				double sMinorAxis = Math.abs(endPoint.getDistanceY(startPoint));
-				newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis);
+				newFigure = new FrontElipse(centerPoint, sMayorAxis, sMinorAxis, properties);
 			} else {
 				return ;
 			}
-
-			figureProperties.put(newFigure,
-					new Properties(fillColorPicker1.getValue(),
-							fillColorPicker2.getValue(),
-							shadows.getValue(),
-							borders.getValue(),
-							edgeSlider.getValue(),
-							layersPane.getChoiceLayer().getValue()
-					)
-			);
 
 			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
 			startPoint = null;
@@ -233,9 +231,9 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
+			for (Pair<Boolean, ArrayList<FrontFigure>> canvas : canvasState.values()) {
 				if (canvas.getKey()) {
-					for (Figure figure : canvas.getValue()) {
+					for (FrontFigure figure : canvas.getValue()) {
 						if (figure.belongs(eventPoint)) {
 							found = true;
 							label.append(figure);
@@ -254,9 +252,9 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Pair<Boolean, CanvasState> canvas : canvasState.values()) {
+				for (Pair<Boolean, ArrayList<FrontFigure>> canvas : canvasState.values()) {
 					if (canvas.getKey()) {
-						for (Figure figure : canvas.getValue()) {
+						for (FrontFigure figure : canvas.getValue()) {
 							if (figure.belongs(eventPoint)){
 								found = true;
 								selectedFigure = figure;
@@ -267,7 +265,7 @@ public class PaintPane extends BorderPane {
 				}
 				if (found) {
 					statusPane.updateStatus(label.toString());
-					Properties props=figureProperties.get(selectedFigure);
+					Properties props=selectedFigure.getProperties();
 					edgeSlider.setValue(props.getFigureBorderWidth());
 					borders.setValue(props.getFigureBorderStyle());
 					shadows.setValue(props.getFigureShadow());
@@ -303,28 +301,28 @@ public class PaintPane extends BorderPane {
 
 		shadows.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setFigureShadow(shadows.getValue());
+				selectedFigure.getProperties().setFigureShadow(shadows.getValue());
 				redrawCanvas();
 			}
 		});
 
 		fillColorPicker1.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
+				selectedFigure.getProperties().setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
 				redrawCanvas();
 			}
 		});
 
 		fillColorPicker2.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
+				selectedFigure.getProperties().setColors(fillColorPicker1.getValue(), fillColorPicker2.getValue());
 				redrawCanvas();
 			}
 		});
 
 		borders.setOnAction(event -> {
 			if (selectedFigure != null) {
-				figureProperties.get(selectedFigure).setFigureBorderStyle(borders.getValue());
+				selectedFigure.getProperties().setFigureBorderStyle(borders.getValue());
 				redrawCanvas();
 			}
 		});
@@ -339,7 +337,7 @@ public class PaintPane extends BorderPane {
 
 		duplicarButton.setOnAction(event -> {
 			if (selectedFigure != null) {
-				Figure dupFigure = selectedFigure.duplicate();
+				FrontFigure dupFigure = selectedFigure.duplicate();
 				propertiesCopy(selectedFigure, dupFigure);
 				selectedFigure = null;
 				redrawCanvas();
@@ -349,7 +347,7 @@ public class PaintPane extends BorderPane {
 		dividirButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				Pair<Figure, Figure> pairFigure = selectedFigure.split();
-				CanvasState cState = canvasState.get(figureProperties.get(selectedFigure).getFigureLayer()).getValue();
+				ArrayList<FrontFigure> cState = canvasState.get(figureProperties.get(selectedFigure).getFigureLayer()).getValue();
 				cState.add(pairFigure.getValue());
 				cState.add(pairFigure.getKey());
 				propertiesCopy(selectedFigure, pairFigure.getValue());
@@ -391,7 +389,7 @@ public class PaintPane extends BorderPane {
 		layersPane.getAddLayerButton().setOnAction(event -> {
 			Layer newLayer=new Layer(layersPane.nextLayer());
 			layersPane.getChoiceLayer().getItems().add(newLayer);
-			canvasState.put(newLayer,new Pair<>(true, new CanvasState()));
+			canvasState.put(newLayer,new Pair<>(true, new ArrayList<FrontFigure>()));
 		});
 
 		layersPane.getRemoveLayerButton().setOnAction(event -> {
@@ -427,79 +425,34 @@ public class PaintPane extends BorderPane {
 	private void redrawCanvas() {
 		//clear canvas
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		for (Pair<Boolean, CanvasState> layer : layerPairSortedMap.values()) {
+		for (Pair<Boolean, ArrayList<FrontFigure>> layer : layerPairSortedMap.values()) {
 			if (layer.getKey()) {
-				for (Figure figure : layer.getValue()) {
+				for (FrontFigure figure : layer.getValue()) {
 					if ((labelPane.getSoloButton().isSelected() && figureProperties.get(figure).getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
 						if (figure == selectedFigure) {
 							gc.setStroke(Color.RED);
 						} else {
 							gc.setStroke(lineColor);
 						}
-						if (figure.isRect()) {
-							drawRectangularFigure(figure);
-						} else {
-							drawOvalFigure(figure);
-						}
+						figure.draw(gc);
 					}
 				}
 			}
 		}
 	}
 
-	private void propertiesCopy(Figure source, Figure destiny) {
-		Properties props= figureProperties.get(source);
+	private void propertiesCopy(FrontFigure source, FrontFigure destiny) {
+		Properties props = source.getProperties();
 		if (!layerPairSortedMap.get(props.getFigureLayer()).getValue().contains(source)) {
 			return;
 		}
 		layerPairSortedMap.get(props.getFigureLayer()).getValue().add(destiny);
-		figureProperties.put(destiny,new Properties(
-				props.getColors().getKey(),
-				props.getColors().getValue(),
-				props.getFigureShadow(),
-				props.getFigureBorderStyle(),
-				props.getFigureBorderWidth(),
-				props.getFigureLayer()
-		));
+		destiny.setProperties(props);
 	}
 
-	private void deleteFigure(Figure figure) {
+	private void deleteFigure(FrontFigure figure) {
 		layerPairSortedMap.get(figureProperties.get(figure).getFigureLayer()).getValue().remove(figure);
 		figureProperties.remove(figure);
 	}
 
-	private void drawRectangularFigure(Figure figure){
-		drawEdgeFigure(figure);
-		Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
-		figureProperties.get(figure).getFigureShadow().shadowRec(gc, figure,colors.getKey().darker());
-		LinearGradient linearGradient = new LinearGradient(0, 0, 1, 0, true,
-				CycleMethod.NO_CYCLE,
-				new Stop(0, colors.getKey()),
-				new Stop(1, colors.getValue())
-		);
-		gc.setFill(linearGradient);
-		gc.fillRect(figure.getLeft(), figure.getTop(),
-				figure.getWidth(), figure.getHeight());
-		gc.strokeRect(figure.getLeft(), figure.getTop(),
-				figure.getWidth(), figure.getHeight());
-	}
-	private void drawOvalFigure(Figure figure) {
-		drawEdgeFigure(figure);
-		Pair<Color, Color>  colors = figureProperties.get(figure).getColors();
-		figureProperties.get(figure).getFigureShadow().shadowRound(gc,figure,colors.getKey().darker());
-		RadialGradient radialGradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
-				CycleMethod.NO_CYCLE,
-				new Stop(0, colors.getKey()),
-				new Stop(1, colors.getValue())
-		);
-		gc.setFill(radialGradient);
-		gc.fillOval(figure.getLeft(), figure.getTop(),
-				figure.getWidth(), figure.getHeight());
-		gc.strokeOval(figure.getLeft(), figure.getTop(),
-				figure.getWidth(), figure.getHeight());
-	}
-	private void drawEdgeFigure(Figure figure) {
-		gc.setLineWidth(figureProperties.get(figure).getFigureBorderWidth());
-		figureProperties.get(figure).getFigureBorderStyle().setPattern(gc);
-	}
 }

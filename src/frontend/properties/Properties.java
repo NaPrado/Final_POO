@@ -1,4 +1,4 @@
-package frontend;
+package frontend.properties;
 
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -22,14 +22,18 @@ public class Properties {
         tags=new HashSet<>();
     }
 
-    public void setTags(String tagsToAdd){
+    public void setTags(String tagsToAdd) {
         Set<String> newtags = new HashSet<>();
         newtags.addAll(Arrays.asList(tagsToAdd.split("[\\s|\\n]+")));
         tags=newtags;
     }
 
-    public Set<String> getTags(){
+    public Set<String> getTags() {
         return tags;
+    }
+
+    public void setTags(Set<String> tagSet) {
+        tags = new HashSet<>(tags);
     }
 
     public Properties setColors(Color c1, Color c2) {
