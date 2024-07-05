@@ -12,8 +12,10 @@ public class MainFrame extends VBox {
         getChildren().add(new AppMenuBar());
         StatusPane statusPane = new StatusPane();
         LayersPane layersPane = new LayersPane();
+        LabelsPane labelPane = new LabelsPane();
+        getChildren().add(labelPane);
         getChildren().add(layersPane);
-        getChildren().add(new PaintPane(layersMap, statusPane,layersPane));
+        getChildren().add(new PaintPane(layersMap, statusPane, labelPane, layersPane));
         getChildren().add(statusPane);
     }
 

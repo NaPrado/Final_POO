@@ -26,6 +26,7 @@ public class PaintPane extends BorderPane {
 
 	// panel superior el de las capas
 	public LayersPane layersPane;
+	public LabelsPane labelPane;
 
 	// BackEnd
 	public SortedMap<Layer, Pair<Boolean, CanvasState>> layerPairSortedMap;
@@ -101,11 +102,12 @@ public class PaintPane extends BorderPane {
 	private static final double MAX=10;
 	private static final double MIN=0.00000001;
 
-	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LayersPane layersPane) {
+	public PaintPane(SortedMap<Layer, Pair<Boolean, CanvasState>> canvasState, StatusPane statusPane, LabelsPane labelPane,LayersPane layersPane) {
 
 		this.layerPairSortedMap = canvasState;
 		this.statusPane = statusPane;
 		this.layersPane=layersPane;
+		this.labelPane=labelPane;
 
 		VBox buttonsBox = new VBox(10);
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
@@ -353,21 +355,6 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
-		layersPane.getfilterByLabel(event->{
-
-		});
-		layersPane.getTodasButton(event->{
-
-		});
-		layersPane.getSoloButton(event->{
-
-
-		});
-		guardarButton.setOnAction(event->{
-			if (selectedFigure != null) {
-			selectedFigure.
-			}
-		});
 
 		layersPane.getMostrarButton().setOnAction(event -> {
 			if (canvasState.containsKey(layersPane.getChoiceLayer().getValue())) {
@@ -402,6 +389,13 @@ public class PaintPane extends BorderPane {
 				layersPane.getChoiceLayer().getItems().remove(layer);
 				canvasState.remove(layer);
 				redrawCanvas();
+			}
+		});
+		labelPane.getfilterByLabel();
+		labelPane.getSoloButton();
+		labelPane.getfilterByLabel();
+		guardarButton.setOnAction(event->{
+			if (selectedFigure != null) {
 			}
 		});
 
