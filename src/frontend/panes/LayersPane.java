@@ -1,5 +1,6 @@
-package frontend;
+package frontend.panes;
 
+import frontend.Layer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

@@ -13,7 +13,7 @@ public class Properties {
     private Layer figureLayer;
     private Set<String> tags;
 
-    Properties(Color c1,Color c2,ShadowEnum figureShadow,BorderEnum figureBorderStyle,double figureBorderWidth,Layer figureLayer){
+    public Properties(Color c1, Color c2, ShadowEnum figureShadow, BorderEnum figureBorderStyle, double figureBorderWidth, Layer figureLayer){
         colors = new Pair<>(c1,c2);
         this.figureShadow = figureShadow;
         this.figureBorderStyle = figureBorderStyle;

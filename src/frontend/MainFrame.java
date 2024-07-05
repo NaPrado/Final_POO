@@ -1,6 +1,10 @@
 package frontend;
 
 import backend.CanvasState;
+import frontend.panes.LabelsPane;
+import frontend.panes.LayersPane;
+import frontend.panes.PaintPane;
+import frontend.panes.StatusPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 

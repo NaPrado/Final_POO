@@ -1,8 +1,9 @@
-package frontend;
+package frontend.panes;
 
 import backend.CanvasState;
 import backend.model.*;
 
+import frontend.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -429,16 +430,16 @@ public class PaintPane extends BorderPane {
 		for (Pair<Boolean, CanvasState> layer : layerPairSortedMap.values()) {
 			if (layer.getKey()) {
 				for (Figure figure : layer.getValue()) {
-					if ((labelPane.getSoloButton().isSelected() && figureProperties.get(figure).getTags().contains(labelPane.getInputFilter()))||(labelPane.getTodasButton().isSelected())){
+					if ((labelPane.getSoloButton().isSelected() && figureProperties.get(figure).getTags().contains(labelPane.getInputFilter())) || (labelPane.getTodasButton().isSelected())) {
 						if (figure == selectedFigure) {
 							gc.setStroke(Color.RED);
 						} else {
 							gc.setStroke(lineColor);
 						}
 						if (figure.isRect()) {
-						drawRectangularFigure(figure);
+							drawRectangularFigure(figure);
 						} else {
-						drawOvalFigure(figure);
+							drawOvalFigure(figure);
 						}
 					}
 				}
