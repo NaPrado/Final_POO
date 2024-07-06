@@ -5,6 +5,8 @@ import backend.model.*;
 import frontend.front_figures.*;
 import frontend.front_figures.FrontCircle;
 import frontend.front_figures.FrontFigure;
+import frontend.panes.buttonTypes.FigureButton;
+import frontend.panes.buttonTypes.FigureButtonFunctionality;
 import frontend.properties.BorderEnum;
 import frontend.properties.Layer;
 import frontend.properties.Properties;
@@ -46,10 +48,10 @@ public class PaintPane extends BorderPane {
 	//arranca botonera barra izquierda
 		// Botones Barra Izquierda
 		public ToggleButton selectionButton = new ToggleButton("Seleccionar");
-		public ToggleButton rectangleButton = new ToggleButton("Rectángulo");
-		public ToggleButton circleButton = new ToggleButton("Círculo");
-		public ToggleButton squareButton = new ToggleButton("Cuadrado");
-		public ToggleButton ellipseButton = new ToggleButton("Elipse");
+		public FigureButton rectangleButton = new FigureButton("Rectángulo", FigureButtonFunctionality.RECTANGLE_BUTTON);
+		public FigureButton circleButton = new FigureButton("Círculo",FigureButtonFunctionality.CICLE_BUTTON);
+		public FigureButton squareButton = new FigureButton("Cuadrado",FigureButtonFunctionality.SQUARE_BUTTON);
+		public FigureButton ellipseButton = new FigureButton("Elipse",FigureButtonFunctionality.ELLIPSE_BUTTON);
 		public ToggleButton deleteButton = new ToggleButton("Borrar");
 
 		// Opciones de sombras
@@ -112,6 +114,7 @@ public class PaintPane extends BorderPane {
 
 		VBox buttonsBox = new VBox(10);
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
+		FigureButton[] figuresButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
 			tool.setMinWidth(90);
@@ -200,7 +203,7 @@ public class PaintPane extends BorderPane {
 			if(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
-			FrontFigure newFigure;
+			FrontFigure newFigure=null;
 			Properties properties = new Properties(fillColorPicker1.getValue(),
 					fillColorPicker2.getValue(),
 					shadows.getValue(),
@@ -208,28 +211,16 @@ public class PaintPane extends BorderPane {
 					edgeSlider.getValue(),
 					layersPane.getChoiceLayer().getValue()
 			);
-			// se puede modularizar??
-			if(rectangleButton.isSelected()) {
-				newFigure = new FrontRectangle(startPoint, endPoint, properties);
+			for (FigureButton figureButton : figuresButtonArr) {
+				if (figureButton.isSelected()){
+					newFigure = figureButton.makeFrontFigure(endPoint,startPoint,properties);
+				}
 			}
-			else if(circleButton.isSelected()) {
-				double circleRadius = Math.abs(endPoint.getDistanceX(startPoint));
-				newFigure = new FrontCircle(startPoint, circleRadius, properties);
-			} else if(squareButton.isSelected()) {
-				double size = Math.abs(endPoint.getDistanceX(startPoint));
-				newFigure = new FrontSquare(startPoint, size, properties);
-			} else if(ellipseButton.isSelected()) {
-				Point centerPoint = new Point(Math.abs(endPoint.getX() + startPoint.getX()) / 2, (Math.abs((endPoint.getY() + startPoint.getY())) / 2));
-				double sMayorAxis = Math.abs(endPoint.getDistanceX(startPoint));
-				double sMinorAxis = Math.abs(endPoint.getDistanceY(startPoint));
-				newFigure = new FrontElipse(centerPoint, sMayorAxis, sMinorAxis, properties);
-			} else {
-				return ;
+			if (newFigure != null) {
+				canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
+				startPoint = null;
+				redrawCanvas();
 			}
-
-			canvasState.get(layersPane.getChoiceLayer().getValue()).getValue().add(newFigure);
-			startPoint = null;
-			redrawCanvas();
 		});
 
 		canvas.setOnMouseMoved(event -> {
