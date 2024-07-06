@@ -236,9 +236,11 @@ public class PaintPane extends BorderPane {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
-			for (Pair<Boolean, ArrayList<FrontFigure>> canvas : canvasState.values()) {
+			ArrayList<Pair<Boolean, ArrayList<FrontFigure>>> layers = new ArrayList<>(canvasState.values());
+			for (Pair<Boolean, ArrayList<FrontFigure>> canvas : layers.reversed()) {
 				if (canvas.getKey()) {
-					for (FrontFigure figure : canvas.getValue()) {
+					ArrayList<FrontFigure> figures = new ArrayList<>(canvas.getValue());
+					for (FrontFigure figure : figures.reversed()) {
 						if (figure.belongs(eventPoint)) {
 							found = true;
 							label.append(figure);
