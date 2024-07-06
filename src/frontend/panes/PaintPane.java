@@ -37,7 +37,7 @@ public class PaintPane extends BorderPane {
 	public SortedMap<Layer, Pair<Boolean, ArrayList<FrontFigure>>> layerPairSortedMap;
 
 	// Canvas y relacionados
-	public Canvas canvas = new Canvas(800, 768);
+	public Canvas canvas = new Canvas(800, 600);
 	public GraphicsContext gc = canvas.getGraphicsContext2D();
 	public Color lineColor = Color.BLACK;
 	public Color defaultFillColor1 = Color.web("#fab900");
@@ -110,7 +110,7 @@ public class PaintPane extends BorderPane {
 		this.layersPane=layersPane;
 		this.labelPane=labelPane;
 
-		VBox buttonsBox = new VBox(10);
+		VBox buttonsBox = new VBox(5);
 		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		FigureButton[] figuresButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton};
 		ToggleGroup tools = new ToggleGroup();
@@ -333,7 +333,8 @@ public class PaintPane extends BorderPane {
 		duplicarButton.setOnAction(event -> {
 			if (selectedFigure != null) {
 				FrontFigure dupFigure = selectedFigure.duplicate();
-				propertiesCopy(selectedFigure, dupFigure);
+				ArrayList<FrontFigure> cState = canvasState.get(selectedFigure.getProperties().getFigureLayer()).getValue();
+				cState.add(dupFigure);
 				selectedFigure = null;
 				redrawCanvas();
 			}
@@ -432,15 +433,6 @@ public class PaintPane extends BorderPane {
 				}
 			}
 		}
-	}
-
-	private void propertiesCopy(FrontFigure source, FrontFigure destiny) {
-		Properties props = source.getProperties();
-		if (!layerPairSortedMap.get(props.getFigureLayer()).getValue().contains(source)) {
-			return;
-		}
-		layerPairSortedMap.get(props.getFigureLayer()).getValue().add(destiny);
-		destiny.setProperties(props);
 	}
 
 	private void deleteFigure(FrontFigure figure) {
