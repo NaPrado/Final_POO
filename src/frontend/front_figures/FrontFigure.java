@@ -53,4 +53,8 @@ public abstract class FrontFigure implements Drawable {
     abstract public FrontFigure duplicate();
 
     abstract public Pair<FrontFigure, FrontFigure> split();
+    @Override
+    public String toString() {
+        return figure.toString();
+    }
 }
