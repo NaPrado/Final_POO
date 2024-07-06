@@ -2,11 +2,9 @@ package frontend.panes;
 
 import backend.model.*;
 
-import frontend.front_figures.*;
-import frontend.front_figures.FrontCircle;
 import frontend.front_figures.FrontFigure;
-import frontend.panes.buttonTypes.FigureButton;
-import frontend.panes.buttonTypes.FigureButtonFunctionality;
+import frontend.panes.button_types.FigureButton;
+import frontend.panes.button_types.FigureButtonFunctionality;
 import frontend.properties.BorderEnum;
 import frontend.properties.Layer;
 import frontend.properties.Properties;
@@ -145,8 +143,7 @@ public class PaintPane extends BorderPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
 				if(selectedFigure!=null){
-					Properties props = selectedFigure.getProperties().setFigureBorderWidth(t1.doubleValue());
-					selectedFigure.setProperties(props);
+					selectedFigure.getProperties().setFigureBorderWidth(t1.doubleValue());
 					edgeSlider.setValue(t1.doubleValue());
 					redrawCanvas();
 				}

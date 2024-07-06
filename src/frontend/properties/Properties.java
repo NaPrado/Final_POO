@@ -36,24 +36,20 @@ public class Properties {
         tags = new HashSet<>(tags);
     }
 
-    public Properties setColors(Color c1, Color c2) {
+    public void setColors(Color c1, Color c2) {
         this.colors = new Pair<>(c1,c2);
-        return this;
     }
 
-    public Properties setFigureBorderStyle(BorderEnum figureBorderStyle) {
+    public void setFigureBorderStyle(BorderEnum figureBorderStyle) {
         this.figureBorderStyle = figureBorderStyle;
-        return this;
     }
 
-    public Properties setFigureBorderWidth(double figureBorderWidth) {
+    public void setFigureBorderWidth(double figureBorderWidth) {
         this.figureBorderWidth = figureBorderWidth;
-        return this;
     }
 
-    public Properties setFigureShadow(ShadowEnum figureShadow) {
+    public void setFigureShadow(ShadowEnum figureShadow) {
         this.figureShadow = figureShadow;
-        return this;
     }
 
     public Pair<Color, Color> getColors() {

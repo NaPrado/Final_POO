@@ -1,4 +1,4 @@
-package frontend.panes.buttonTypes;
+package frontend.panes.button_types;
 
 import backend.model.Point;
 import frontend.front_figures.*;

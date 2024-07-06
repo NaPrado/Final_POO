@@ -48,7 +48,7 @@ public enum ShadowEnum {
 
 
     private final String choiceName;
-    private int offset;
+    private final int offset;
     ShadowEnum(String choiceName, int offset) {
         this.choiceName = choiceName;
         this.offset=offset;

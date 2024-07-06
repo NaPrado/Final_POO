@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="Final_POO">
+    <output-path>$PROJECT_DIR$/out/artifacts/Final_POO</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="frontend.AppLauncher" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Final_POO.jar">
+        <element id="module-output" name="Final_POO" />
+      </element>
+    </root>
+  </artifact>
+</component>

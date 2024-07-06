@@ -1,4 +1,4 @@
-package frontend.panes.buttonTypes;
+package frontend.panes.button_types;
 
 import backend.model.Point;
 import frontend.front_figures.FrontFigure;
@@ -6,7 +6,7 @@ import frontend.properties.Properties;
 import javafx.scene.control.ToggleButton;
 
 public class FigureButton extends ToggleButton {
-    private FigureButtonFunctionality fbf;
+    private final FigureButtonFunctionality fbf;
     public FigureButton(String name, FigureButtonFunctionality fbf){
         super(name);
         this.fbf = fbf;
