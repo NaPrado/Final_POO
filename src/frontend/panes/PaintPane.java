@@ -345,8 +345,6 @@ public class PaintPane extends BorderPane {
 				ArrayList<FrontFigure> cState = canvasState.get(selectedFigure.getProperties().getFigureLayer()).getValue();
 				cState.add(pairFigure.getValue());
 				cState.add(pairFigure.getKey());
-				propertiesCopy(selectedFigure, pairFigure.getValue());
-				propertiesCopy(pairFigure.getValue(), pairFigure.getKey());
 				deleteFigure(selectedFigure);
 				selectedFigure = null;
 				redrawCanvas();

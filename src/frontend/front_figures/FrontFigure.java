@@ -2,7 +2,7 @@ package frontend.front_figures;
 
 import backend.model.Figure;
 import backend.model.Point;
-import frontend.panes.PaintPane;
+
 import frontend.properties.Properties;
 import javafx.util.Pair;
 
