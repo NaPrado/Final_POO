@@ -37,7 +37,7 @@ public class PaintPane extends BorderPane {
 	public SortedMap<Layer, Pair<Boolean, ArrayList<FrontFigure>>> layerPairSortedMap;
 
 	// Canvas y relacionados
-	public Canvas canvas = new Canvas(800, 800);
+	public Canvas canvas = new Canvas(800, 768);
 	public GraphicsContext gc = canvas.getGraphicsContext2D();
 	public Color lineColor = Color.BLACK;
 	public Color defaultFillColor1 = Color.web("#fab900");
@@ -173,9 +173,12 @@ public class PaintPane extends BorderPane {
 		labelPane.getFilterByLabel().textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (!newValue.isEmpty()) {
-					labelPane.setInputFilter(newValue.split("[\\s|\n]+")[0]);
+				String primeraPalabra = "";
+				newValue = newValue.trim(); //elimina los espacios del principio y del final
+				if (!newValue.isEmpty()) { // pregunto si es vacio, en este caso vacio puede ser espacios
+					primeraPalabra = newValue.split("\\s+")[0];
 				}
+				labelPane.setInputFilter(primeraPalabra);
 				redrawCanvas();
 			}
 		});
