@@ -29,7 +29,7 @@ public class Properties {
     }
 
     public Set<String> getTags() {
-        return tags;
+        return new HashSet<>(tags);
     }
 
     public void setTags(Set<String> tagSet) {

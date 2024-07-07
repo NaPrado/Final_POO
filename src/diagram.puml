@@ -237,5 +237,16 @@ enum src.frontend.panes.button_types.FigureButtonFunctionality{
     SQUARE_BUTTON
     +   FrontFigure makeNewFigure( Point endPoint, Point startPoint, Properties properties)
 }
-
+class src.frontend.panes.labelsPane extends javafx.scene.layout.BorderPane{
+    -   RadioButton todasButton
+    -   RadioButton soloButton
+    -   TextField filterByLabel
+    -   String inputFilter
+    +   LabelsPane()
+    +   RadioButton getSoloButton()
+    +   RadioButton getTodasButton()
+    +   TextField getFilterByLabel()
+    +   String getInputFilter()
+    +   void setInputFilter(String inputFilter)
+}
 @enduml
