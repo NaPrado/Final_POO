@@ -182,7 +182,6 @@ class src.frontend.panes.PaintPane extends javafx.scene.layout.BorderPane{
     --
     +   PaintPane(SortedMap<Layer, Pair<Boolean, ArrayList<FrontFigure>>> canvasState, StatusPane statusPane, LabelsPane labelPane,LayersPane layersPane)
     -   void redrawCanvas()
-    -   void propertiesCopy(FrontFigure source, FrontFigure destiny)
     -   void deleteFigure(FrontFigure figure)
 }
 interface src.frontend.front_figures.Drawable{
