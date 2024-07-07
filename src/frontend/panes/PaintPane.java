@@ -111,6 +111,7 @@ public class PaintPane extends BorderPane {
 		this.labelPane=labelPane;
 
 		VBox buttonsBox = new VBox(5);
+		ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 		FigureButton[] figuresButtonArr = {rectangleButton, circleButton, squareButton, ellipseButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : toolsArr) {
